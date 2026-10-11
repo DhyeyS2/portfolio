@@ -612,7 +612,7 @@ function fitMedia(fig,el,w,h){
 function tryVideo(fig,img){
   const orig=img.getAttribute('src')||'',src=orig.replace(/\.(jpe?g|png|webp)$/i,'.mp4');
   img.remove();
-  if(src===orig){fig.classList.add('empty');return}
+  if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');return}   // homepage tiles are photo-only
   const v=document.createElement('video');
   v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
   v.addEventListener('loadedmetadata',()=>{fitMedia(fig,v,v.videoWidth,v.videoHeight);vidObs.observe(v)},{once:true});
