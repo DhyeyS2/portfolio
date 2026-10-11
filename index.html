@@ -61,8 +61,8 @@ h1 span{color:var(--muted)}
 /* launch pad + rocket */
 .pad{position:absolute;right:9%;bottom:0;width:180px;height:100%;z-index:2;pointer-events:none}
 .tower{position:absolute;bottom:0;left:18px;width:14px;height:58%;border:1px solid var(--line2);border-bottom:0;background:repeating-linear-gradient(45deg,transparent 0 9px,var(--line2) 9px 10px),repeating-linear-gradient(-45deg,transparent 0 9px,var(--line2) 9px 10px)}
-.base{position:absolute;bottom:0;left:0;right:0;height:14px;background:linear-gradient(var(--line2),var(--bg2));border-top:1px solid #34404f}
-.hrocket{position:absolute;left:50%;bottom:14px;width:72px;margin-left:-36px;will-change:transform}
+.base{position:absolute;bottom:0;left:0;right:0;height:14px;z-index:3;background:linear-gradient(var(--line2),var(--bg2));border-top:1px solid #34404f}
+.hrocket{position:absolute;left:50%;bottom:-71px;width:72px;margin-left:-36px;will-change:transform;z-index:2}
 .hrocket svg{display:block;width:72px;overflow:visible}
 #plume{position:absolute;right:calc(9% - 260px);bottom:0;width:700px;height:420px;z-index:1;pointer-events:none}
 
@@ -227,7 +227,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   .hud{padding:14px 18px}.hud nav{display:none}
   .tile,.tile.wide{grid-column:span 12}
   .pad{right:-10px;width:120px;opacity:.55}
-  .hrocket,.hrocket svg{width:46px}.hrocket{margin-left:-23px}
+  .hrocket,.hrocket svg{width:46px}.hrocket{margin-left:-23px;bottom:-40px}
   #plume{right:-300px}
   .ptext,.about{grid-template-columns:1fr}.pcard{position:static}.pcard .media{aspect-ratio:1}.about{gap:32px}
   .step{grid-template-columns:1fr}
@@ -265,6 +265,8 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
           <linearGradient id="body" x1="0" x2="1"><stop offset="0" stop-color="#8f9bab"/><stop offset=".45" stop-color="#eef2f6"/><stop offset="1" stop-color="#5f6a78"/></linearGradient>
           <linearGradient id="fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset=".22" stop-color="#ffc24a"/><stop offset=".65" stop-color="#ff6a2b"/><stop offset="1" stop-color="#ff6a2b" stop-opacity="0"/></linearGradient>
         </defs>
+        <g id="hlegL" transform="rotate(0 11 80)"><line x1="11" y1="80" x2="11" y2="54" stroke="#4a5563" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="52" width="6" height="2.4" rx="1" fill="#6c7785"/></g>
+        <g id="hlegR" transform="rotate(0 29 80)"><line x1="29" y1="80" x2="29" y2="54" stroke="#4a5563" stroke-width="2.4" stroke-linecap="round"/><rect x="26" y="52" width="6" height="2.4" rx="1" fill="#6c7785"/></g>
         <path d="M20 2 C28 14 30 26 30 36 L30 92 L10 92 L10 36 C10 26 12 14 20 2Z" fill="url(#body)"/>
         <rect x="10" y="44" width="20" height="3" fill="#ff6a2b"/>
         <circle cx="20" cy="58" r="4" fill="#0b0f15" stroke="#5ad1ff" stroke-width="1"/>
@@ -617,46 +619,79 @@ const hero=$('#hero'),rk=$('#hrocket'),hfl=$('#hflame'),pc=$('#plume'),px=pc.get
 function sizePlume(){pc.width=pc.clientWidth*dpr;pc.height=pc.clientHeight*dpr}
 sizePlume();addEventListener('resize',sizePlume);
 let lastY=scrollY,vel=0,smooth=0,t0=performance.now();
+let mode='launch',legK=0,everFlown=false,landedOnce=false,burst=0;
+const hlegL=$('#hlegL'),hlegR=$('#hlegR');
 
 function frame(now){
   const t=(now-t0)/1000;
   const hh=hero.offsetHeight, p=Math.max(0,Math.min(1,scrollY/(hh*.85)));
-  smooth+=(p-smooth)*.14;
+  // direction: scrolling down = launch, scrolling back up = return and land
+  if(p>smooth+.002)mode='launch';else if(p<smooth-.002)mode='land';
+  smooth+=(p-smooth)*(mode==='land'?.026:.14);          // slower on the way down so the landing is visible
+  if(Math.abs(p-smooth)<.0005)smooth=p;
   const dy=scrollY-lastY;lastY=scrollY;vel+=(Math.abs(dy)-vel)*.12;
 
-  // rocket climbs with an accelerating curve, like a real launch
   const lift=Math.pow(smooth,1.7)*(innerHeight*1.25);
-  const shake=smooth>0.01&&smooth<.25?(Math.sin(t*90)*1.2):0;
-  rk.style.transform=`translate(${shake}px,${-lift}px)`;
+  const onPad=lift<1.2;
+  const descending=mode==='land'&&!onPad;
+  // small steering corrections on the way down, settling as it nears the pad
+  const tilt=descending?Math.sin(t*2.4)*5*Math.min(1,lift/220):0;
+  const shake=mode==='launch'&&smooth>0.01&&smooth<.25?(Math.sin(t*90)*1.2):0;
+  rk.style.transform=`translate(${shake}px,${-lift}px) rotate(${tilt.toFixed(2)}deg)`;
+  rk.style.transformOrigin='50% 70%';
 
-  // flame: small idle burn once countdown hits zero, full burn while climbing
+  // legs: out for landing and while sitting on the pad after a landing, fold away on launch
+  let legT=legK;
+  if(descending)legT=lift<innerHeight*.55?1:0;
+  else if(mode==='launch'&&lift>30)legT=0;
+  legK+=(legT-legK)*.09;
+  const ke=1-Math.pow(1-legK,3);
+  hlegL.setAttribute('transform',`rotate(${(-150*ke).toFixed(1)} 11 80)`);
+  hlegR.setAttribute('transform',`rotate(${(150*ke).toFixed(1)} 29 80)`);
+
+  // flame: idle before launch, full burn climbing, landing burn coming down, off after touchdown
   let f=0;
-  if(ready)f=.25+Math.sin(t*40)*.04;
-  if(smooth>0.005)f=Math.min(2.3,1+smooth*1.4+vel/30)+Math.sin(t*55)*.08;
-  hfl.setAttribute('transform',`translate(0 99) scale(1 ${f.toFixed(3)})`);
+  if(mode==='launch'||!everFlown){
+    if(ready&&onPad&&!landedOnce)f=.25+Math.sin(t*40)*.04;
+    if(smooth>0.005)f=Math.min(2.3,1+smooth*1.4+vel/30)+Math.sin(t*55)*.08;
+  }else if(descending){
+    f=Math.min(2,.8+(1-Math.min(1,lift/(innerHeight*1.1)))*1.3)+Math.sin(t*55)*.08;
+  }
+  if(smooth>0.02)everFlown=true;
+  hfl.setAttribute('transform',`translate(0 99) rotate(${(-tilt*1.6).toFixed(2)} 20 0) scale(1 ${Math.max(0,f).toFixed(3)})`);
 
-  // smoke at the pad while the rocket is low
+  // touchdown
+  if(mode==='land'&&onPad&&everFlown&&!landedOnce){landedOnce=true;burst=45;
+    $('#tmsg').textContent='TOUCHDOWN ✓  SCROLL TO RELAUNCH ↓';$('#tmsg').style.color='var(--ok)'}
+  if(mode==='launch'&&smooth>0.02&&landedOnce){landedOnce=false;
+    $('#tmsg').textContent='SCROLL TO LAUNCH ↓';$('#tmsg').style.color='var(--flame)'}
+
+  // smoke at the pad while the engine is firing low down
   const W=pc.width,H=pc.height,cx=W/2,base=H-14*dpr;
-  const emit=smooth>0.005&&lift<innerHeight*.6?Math.round(3+vel/4):(ready&&smooth<0.005&&Math.random()<.25?1:0);
+  const firingLow=f>.5&&lift<innerHeight*.6;
+  let emit=firingLow?Math.round(3+vel/4+(descending?2:0)):(ready&&onPad&&!landedOnce&&Math.random()<.25?1:0);
+  const hot=firingLow;
+  if(burst){emit+=burst;burst=0}
   for(let i=0;i<emit;i++){
     const dir=Math.random()<.5?-1:1;
-    parts.push({x:cx+(Math.random()-.5)*20*dpr,y:base-Math.random()*6*dpr,vx:dir*(.4+Math.random()*Math.random()*5)*dpr,vy:-(Math.random()*1.4)*dpr,r:(6+Math.random()*12)*dpr,a:smooth>0.005?.5:.18,life:1})}
+    parts.push({x:cx+(Math.random()-.5)*20*dpr,y:base-Math.random()*6*dpr,vx:dir*(.4+Math.random()*Math.random()*5)*dpr,vy:-(Math.random()*1.4)*dpr,r:(6+Math.random()*12)*dpr,a:hot?.45:.3,life:1,hot})}
   px.clearRect(0,0,W,H);
   parts=parts.filter(q=>q.life>0);
   for(const q of parts){q.x+=q.vx;q.y+=q.vy;q.vx*=.975;q.vy-=.006*dpr;q.r+=.5*dpr;q.life-=.006+Math.abs(q.x-cx)/W*.012;
     const g=px.createRadialGradient(q.x,q.y,0,q.x,q.y,q.r);
-    const warm=q.life>.85&&smooth>0.005;
+    const warm=q.hot&&q.life>.85;
     g.addColorStop(0,warm?`rgba(255,170,90,${q.a*q.life})`:`rgba(150,160,175,${q.a*q.life*.55})`);
     g.addColorStop(1,'rgba(120,130,145,0)');
     px.fillStyle=g;px.beginPath();px.arc(q.x,q.y,q.r,0,7);px.fill()}
-  // ignition glow on the pad
-  if(smooth>0.005&&lift<innerHeight*.5){const gl=px.createRadialGradient(cx,base,0,cx,base,120*dpr);
-    gl.addColorStop(0,`rgba(255,120,50,${.35*(1-lift/(innerHeight*.5))})`);gl.addColorStop(1,'rgba(255,120,50,0)');
+  // engine glow on the pad
+  if(firingLow){const gl=px.createRadialGradient(cx,base,0,cx,base,120*dpr);
+    gl.addColorStop(0,`rgba(255,120,50,${.35*(1-lift/(innerHeight*.6))})`);gl.addColorStop(1,'rgba(255,120,50,0)');
     px.fillStyle=gl;px.fillRect(0,0,W,H)}
 
   // altitude readout across the whole page
   const max=document.documentElement.scrollHeight-innerHeight;
-  $('#alt').textContent=String(Math.round((max>0?scrollY/max:0)*520)).padStart(4,'0');
+  const pp=max>0?Math.min(1,scrollY/max):0;
+  $('#alt').textContent=String(Math.round(pp*520)).padStart(4,'0');
 
   // starfield drifts down as you climb
   sx.clearRect(0,0,SW,SH);
