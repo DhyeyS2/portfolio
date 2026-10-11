@@ -12,6 +12,12 @@ To add more anywhere, find that section in `index.html`, copy one `<figure ...>`
 and change the file name in both places on that line. Empty slots are skipped by the viewer,
 but they still show as striped boxes on the page, so delete any you don't fill.
 
+## Adding videos
+Any photo slot can show a video instead. Name the video the same as the slot but ending in `.mp4`
+(e.g. `motor-3.mp4` instead of `motor-3.jpg`) and put it in `images/`. If a slot has no `.jpg`,
+it plays the `.mp4`: silently on a loop on the page, and full screen with sound when clicked.
+Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need converting to `.mp4` first.
+
 ## How the site is laid out
 - The top screen has the launch-pad rocket. It lifts off as visitors scroll.
 - Below it is the project grid. Each tile opens its own project page.
