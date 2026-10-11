@@ -15,7 +15,7 @@ but they still show as striped boxes on the page, so delete any you don't fill.
 ## Adding videos
 Any photo slot can show a video instead. Name the video the same as the slot but ending in `.mp4`
 (e.g. `motor-3.mp4` instead of `motor-3.jpg`) and put it in `images/`. If a slot has no `.jpg`,
-it plays the `.mp4`: silently on a loop on the page, and full screen with sound when clicked.
+it shows the `.mp4` as a still frame with a play button, and visitors click it to watch full screen with sound.
 Videos only play inside projects. The homepage tiles (`cover-...`) are photo-only.
 Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need converting to `.mp4` first.
 
