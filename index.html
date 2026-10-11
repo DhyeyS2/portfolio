@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dhyey Sojitra | Aerospace Projects</title>
+<meta name="description" content="Rockets, motors, avionics and aircraft built by Dhyey Sojitra.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080b; --bg2:#0b0f15; --bg3:#0f141c; --line:#1a212b; --line2:#263040;
+  --text:#e8edf3; --muted:#8a96a6; --dim:#556070;
+  --flame:#ff6a2b; --flame2:#ffc24a; --cyan:#5ad1ff; --ok:#6fe3a5; --bad:#ff7a6b;
+  --sans:'Space Grotesk',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--flame);color:#000}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:16px 32px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);background:rgba(6,8,11,.78);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hud b{color:var(--text);font-weight:500}
+.hud nav{display:flex;gap:24px}
+.hud nav a:hover{color:var(--flame)}
+.alt{color:var(--flame2)}
+
+main{position:relative;z-index:2}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero .wrap{width:100%}
+.hero-text{position:relative;z-index:3;max-width:640px}
+/* profile card at the top of the hero */
+.profile{display:flex;align-items:center;gap:20px;margin-bottom:36px;padding:16px 20px 16px 16px;border:1px solid var(--line);border-radius:6px;background:rgba(11,15,21,.72);backdrop-filter:blur(6px);max-width:600px}
+.avatar{position:relative;flex:none;width:84px;height:84px;border-radius:50%;padding:3px;background:conic-gradient(from 200deg,var(--flame),var(--flame2),var(--line2) 60%,var(--flame))}
+.avatar .media{width:100%;height:100%;border-radius:50%;aspect-ratio:1;border:2px solid var(--bg)}
+.avatar .media.empty::after{content:"PHOTO";font-size:9px;padding:0}
+.pinfo{min-width:0}
+.pname{font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.prole{color:var(--muted);font-size:14.5px;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line2);border-radius:2px;padding:3px 7px;white-space:nowrap}
+.chip.live{color:var(--ok);border-color:rgba(111,227,165,.35);display:inline-flex;align-items:center;gap:6px}
+.chip.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 1.8s infinite}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--flame);text-transform:uppercase;margin-bottom:22px}
+h1{font-size:clamp(46px,8vw,104px);line-height:.96;font-weight:600;letter-spacing:-.035em}
+h1 span{color:var(--muted)}
+.lede{max-width:520px;margin-top:28px;font-size:19px;color:var(--muted)}
+.count{margin-top:48px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--dim);display:flex;align-items:center;gap:14px}
+.count .t{color:var(--flame2);font-size:15px;min-width:5.5ch}
+.count{flex-wrap:nowrap}.count span{white-space:nowrap}.count .bar{flex:0 1 120px;width:120px;height:2px;background:var(--line2);position:relative;overflow:hidden}
+.count .bar i{position:absolute;inset:0;background:var(--flame);transform-origin:left;transform:scaleX(0);transition:transform 1s linear}
+
+/* launch pad + rocket */
+.pad{position:absolute;right:9%;bottom:0;width:180px;height:100%;z-index:2;pointer-events:none}
+.tower{position:absolute;bottom:0;left:18px;width:14px;height:58%;border:1px solid var(--line2);border-bottom:0;background:repeating-linear-gradient(45deg,transparent 0 9px,var(--line2) 9px 10px),repeating-linear-gradient(-45deg,transparent 0 9px,var(--line2) 9px 10px)}
+.base{position:absolute;bottom:0;left:0;right:0;height:14px;z-index:3;background:linear-gradient(var(--line2),var(--bg2));border-top:1px solid #34404f}
+.hrocket{position:absolute;left:50%;bottom:-71px;width:72px;margin-left:-36px;will-change:transform;z-index:2}
+.hrocket svg{display:block;width:72px;overflow:visible}
+#plume{position:absolute;right:calc(9% - 260px);bottom:0;width:700px;height:420px;z-index:1;pointer-events:none}
+
+/* ---------- SECTION HEADS ---------- */
+.block{padding:110px 0}
+.shead{display:flex;align-items:baseline;gap:18px;margin-bottom:40px;border-bottom:1px solid var(--line);padding-bottom:18px}
+.shead .idx{font-family:var(--mono);font-size:13px;color:var(--flame)}
+.shead h2{font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em}
+.shead p{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+
+/* ---------- PROJECT GRID ---------- */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.tile{grid-column:span 4;position:relative;display:flex;flex-direction:column;border:1px solid var(--line);background:rgba(11,15,21,.78);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.tile.wide{grid-column:span 6}
+.tile:hover{border-color:rgba(255,106,43,.55);transform:translateY(-4px)}
+.tile .cover{aspect-ratio:16/10;border:0;border-bottom:1px solid var(--line);border-radius:0}
+.tile.wide .cover{aspect-ratio:16/9}
+.tile .cover img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.tile:hover .cover img{transform:scale(1.05)}
+.tile .meta{padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.tile .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tile .code{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em}
+.tile h3{font-size:21px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.tile .sub{font-size:14px;color:var(--muted)}
+.tile .open{margin-top:auto;padding-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);transition:color .3s}
+.tile:hover .open{color:var(--flame)}
+.status{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border:1px solid;border-radius:2px;white-space:nowrap}
+.s-ok{color:var(--ok);border-color:rgba(111,227,165,.35)}
+.s-fail{color:var(--bad);border-color:rgba(255,122,107,.35)}
+.s-wip{color:var(--flame2);border-color:rgba(255,194,74,.35)}
+.s-done{color:var(--cyan);border-color:rgba(90,209,255,.35)}
+
+/* image slots: drop a file into /images with the matching name and it appears */
+.media{position:relative;border:1px dashed var(--line2);border-radius:3px;aspect-ratio:4/3;overflow:hidden;background:var(--bg2);margin:0}
+.media img,.media video{width:100%;height:100%;object-fit:cover;display:block}
+.media.fit img:not(.bgblur){object-fit:contain;position:relative;z-index:1}
+.media .bgblur{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(18px) brightness(.45) saturate(1.2);transform:scale(1.15);pointer-events:none}
+.media.fit{border-style:solid;border-color:var(--line)}
+.media.empty{background:repeating-linear-gradient(45deg,var(--bg2) 0 10px,#0d121a 10px 20px)}
+.media.empty::after{content:attr(data-label);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em}
+
+/* ---------- PROJECT OVERLAY ---------- */
+.ov{position:fixed;inset:0;z-index:50;pointer-events:none}
+.ov .scrim{position:absolute;inset:0;background:rgba(3,4,6,.7);backdrop-filter:blur(4px);opacity:0;transition:opacity .4s}
+.ov .panel{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;clip-path:inset(50% 50% 50% 50% round 6px);opacity:0}
+.ov .panel.anim{transition:clip-path .6s cubic-bezier(.7,0,.2,1),opacity .25s}
+.pinner{max-width:1320px;margin:0 auto;opacity:0;transform:translateY(16px);transition:opacity .45s .3s,transform .45s .3s}
+.ov.on .pinner{opacity:1;transform:none}
+.ov.on{pointer-events:auto}
+.ov.on .scrim{opacity:1}
+.ov.on .panel{opacity:1}
+.telem{display:flex;align-items:center;gap:18px;padding:16px 28px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);flex:none;background:var(--bg2)}
+.telem .rec{width:7px;height:7px;border-radius:50%;background:var(--flame);box-shadow:0 0 10px var(--flame);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.telem b{color:var(--text);font-weight:500}
+.close{margin-left:auto;background:none;border:1px solid var(--line2);color:var(--muted);font:inherit;font-size:11px;letter-spacing:.12em;padding:7px 12px;border-radius:2px;cursor:pointer;transition:all .25s}
+.close:hover{border-color:var(--flame);color:var(--flame)}
+.pbody{overflow-y:auto;flex:1;padding:48px 32px 120px}
+.pbody.has-tl{padding-bottom:62vh}
+.phead .code{font-family:var(--mono);font-size:12px;color:var(--flame);letter-spacing:.14em}
+.phead h2{font-size:clamp(32px,5vw,52px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:8px 0 14px}
+.phead p{color:var(--muted);font-size:17px;max-width:640px}
+.kv{display:flex;flex-wrap:wrap;gap:0;margin:28px 0 8px;border:1px solid var(--line);border-radius:3px}
+.kv div{padding:12px 18px;border-right:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.kv div:last-child{border-right:0}
+.kv dt{color:var(--dim);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.kv dd{color:var(--text)}
+.ptext{margin-top:32px;display:grid;grid-template-columns:.85fr 1.35fr;gap:40px;align-items:start}
+.ptext p{color:#c3ccd7;font-size:15.5px;margin-bottom:14px}
+.lesson{border-left:2px solid var(--flame);padding:4px 0 4px 14px;color:var(--muted)!important;font-style:italic}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gallery .media{aspect-ratio:4/3}
+.btn{display:inline-block;font-family:var(--mono);font-size:13px;padding:13px 20px;border:1px solid var(--line2);border-radius:3px;transition:all .25s}
+.btn:hover{border-color:var(--flame);color:var(--flame)}
+.btn.pri{background:var(--flame);border-color:var(--flame);color:#0a0a0a}
+.btn.pri:hover{background:var(--flame2);border-color:var(--flame2);color:#0a0a0a}
+
+/* ---------- TIMELINES ---------- */
+.tl{position:relative;padding-left:56px;margin-top:40px}
+.tl::before{content:"";position:absolute;left:17px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tl .fill{position:absolute;left:17px;top:8px;width:2px;height:0;background:linear-gradient(var(--flame2),var(--flame));box-shadow:0 0 12px var(--flame)}
+.step{position:relative;padding-bottom:72px;display:grid;grid-template-columns:minmax(260px,.8fr) 1.35fr;gap:40px;align-items:start;opacity:.3;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.step:last-child{padding-bottom:0}
+.step.lit{opacity:1;transform:none}
+.step.active .dot{animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,106,43,.6),0 0 14px var(--flame)}100%{box-shadow:0 0 0 14px rgba(255,106,43,0),0 0 14px var(--flame)}}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--flame);letter-spacing:.14em;display:flex;gap:10px;align-items:center}
+.step h3{font-size:22px;font-weight:500;margin:4px 0 8px;letter-spacing:-.01em}
+.step p{color:var(--muted);font-size:15px}
+.change{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--flame2);border:1px solid rgba(255,194,74,.3);padding:4px 8px;border-radius:2px}
+/* plain dot */
+.dot{position:absolute;left:-46px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--line2);transition:all .4s}
+.step.lit .dot{border-color:var(--flame);background:var(--flame);box-shadow:0 0 14px var(--flame)}
+/* motor checkpoint: nozzle that ignites downward */
+.noz{position:absolute;left:-49px;top:-2px;width:22px;height:26px}
+.noz .bell{position:absolute;left:3px;top:0;width:16px;height:18px;background:linear-gradient(90deg,#3b4552,#8592a3,#3b4552);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);transition:filter .3s}
+.noz .fl{position:absolute;left:50%;top:17px;width:14px;height:58px;margin-left:-7px;transform-origin:50% 0;transform:scaleY(0);opacity:0;
+  background:radial-gradient(ellipse at 50% 0,#fff 0 12%,var(--flame2) 30%,var(--flame) 60%,transparent 72%);filter:blur(.4px);border-radius:0 0 50% 50%}
+.noz .glow{position:absolute;left:50%;top:14px;width:70px;height:70px;margin-left:-35px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,60,.55),transparent 65%);opacity:0;transform:scale(.4)}
+.noz .sp{position:absolute;left:50%;top:22px;width:3px;height:3px;border-radius:50%;background:var(--flame2);opacity:0}
+.step.lit .noz .bell{filter:brightness(1.05) sepia(.35) saturate(2) hue-rotate(-15deg)}
+.step.active .noz .bell{filter:brightness(1.3) drop-shadow(0 0 6px rgba(255,106,43,.7))}
+.step.active .noz .fl{animation:ignite 1s cubic-bezier(.2,.7,.2,1) forwards,flick .09s 1s infinite alternate}
+.step.active .noz .glow{animation:flash 1s ease-out forwards}
+.step.active .noz .sp{animation:spark .9s ease-out forwards}
+.step.off .noz .fl{animation:shut .5s ease-in forwards}
+.step.off .noz .glow{animation:dim .5s ease-in forwards}
+@keyframes shut{0%{transform:scaleY(.6);opacity:.85}40%{transform:scaleY(.8);opacity:.9}100%{transform:scaleY(0);opacity:0}}
+@keyframes dim{from{opacity:.35;transform:scale(.8)}to{opacity:0;transform:scale(.3)}}
+.noz .sp:nth-child(4){--x:-22px;--y:40px}.noz .sp:nth-child(5){--x:20px;--y:46px;animation-delay:.05s}
+.noz .sp:nth-child(6){--x:-10px;--y:60px;animation-delay:.1s}.noz .sp:nth-child(7){--x:14px;--y:30px;animation-delay:.02s}
+@keyframes ignite{0%{transform:scaleY(0);opacity:0}25%{transform:scaleY(1.45);opacity:1}100%{transform:scaleY(.55);opacity:.85}}
+@keyframes flick{to{transform:scaleY(.62)}}
+@keyframes flash{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.2)}100%{opacity:.35;transform:scale(.8)}}
+@keyframes spark{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--x),var(--y))}}
+.step.final .noz{transform:scale(1.25);transform-origin:50% 0}
+
+/* ---------- PHOTO VIEWER ---------- */
+.pbody .media:not(.empty),#about .media:not(.empty){cursor:zoom-in}
+.pbody .media:not(.empty)::before,#about .media:not(.empty)::before{content:"⤢";position:absolute;right:8px;bottom:8px;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;background:rgba(6,8,11,.65);border:1px solid rgba(255,255,255,.18);border-radius:3px;opacity:0;transition:opacity .25s}
+.pbody .media:not(.empty):hover::before,#about .media:not(.empty):hover::before{opacity:1}
+.pbody .media img,#about .media img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.pbody .media:not(.empty):not(.fit):hover img{transform:scale(1.04)}
+.lb{position:fixed;inset:0;z-index:80;pointer-events:none}
+.lb .lbbg{position:absolute;inset:0;background:rgba(3,4,6,.94);opacity:0;transition:opacity .35s}
+.lb.on{pointer-events:auto}.lb.on .lbbg{opacity:1}
+.lb img{position:fixed;object-fit:contain;border-radius:3px;box-shadow:0 30px 80px rgba(0,0,0,.6);transition:left .45s cubic-bezier(.2,.7,.2,1),top .45s cubic-bezier(.2,.7,.2,1),width .45s cubic-bezier(.2,.7,.2,1),height .45s cubic-bezier(.2,.7,.2,1),opacity .2s}
+.lb .ui{opacity:0;transition:opacity .3s .15s}.lb.on .ui{opacity:1}
+.lbbtn{position:fixed;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:1px solid var(--line2);background:rgba(11,15,21,.8);color:var(--text);font-size:20px;cursor:pointer;transition:all .2s;z-index:2}
+.lbbtn:hover{border-color:var(--flame);color:var(--flame)}
+.lbbtn.prev{left:22px}.lbbtn.next{right:22px}
+.lbclose{position:fixed;top:18px;right:22px;z-index:2;background:rgba(11,15,21,.8);border:1px solid var(--line2);color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:8px 12px;border-radius:2px;cursor:pointer}
+.lbclose:hover{border-color:var(--flame);color:var(--flame)}
+.lbcount{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);z-index:2}
+.lb.single .lbbtn,.lb.single .lbcount{display:none}
+@media (max-width:900px){.lbbtn{width:40px;height:40px;font-size:17px}.lbbtn.prev{left:10px}.lbbtn.next{right:10px}}
+
+/* ---------- ABOUT / CONTACT ---------- */
+.about{display:grid;grid-template-columns:340px 1fr;gap:56px;align-items:start}
+.pcard{position:sticky;top:90px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:rgba(11,15,21,.78)}
+.pcard .media{aspect-ratio:4/5;border:0;border-bottom:1px solid var(--line);border-radius:0}
+.pcard-body{padding:20px 22px 22px}
+.pcard-name{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.pcard-role{color:var(--flame);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:9px 16px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:14px}
+.facts dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding-top:3px}
+.facts dd{color:var(--text)}
+.bio p{color:#c3ccd7;font-size:17px;margin-bottom:18px;max-width:700px}
+.bio .bio-lead{font-size:clamp(22px,2.6vw,28px);line-height:1.35;color:var(--text);font-weight:500;letter-spacing:-.01em;margin-bottom:24px}
+.skills{display:grid;gap:22px;margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+.skills h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:400;margin-bottom:10px}
+.skills .chip{font-size:12px;padding:6px 10px;color:var(--text)}
+.plink{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--flame)}
+.plink:hover{color:var(--flame2)}
+.contact h2{font-size:clamp(34px,6vw,64px);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.contact h2 span{color:var(--flame)}
+.links{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
+footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px;border-top:1px solid var(--line);position:relative;z-index:2;display:flex;justify-content:space-between}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.vis{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .wrap{padding:0 18px}
+  .hud{padding:14px 18px}.hud nav{display:none}
+  .tile,.tile.wide{grid-column:span 12}
+  .pad{right:-10px;width:120px;opacity:.55}
+  .hrocket,.hrocket svg{width:46px}.hrocket{margin-left:-23px;bottom:-40px}
+  #plume{right:-300px}
+  .ptext,.about{grid-template-columns:1fr}.pcard{position:static}.pcard .media{aspect-ratio:1}.about{gap:32px}
+  .step{grid-template-columns:1fr}
+  .tl{padding-left:46px}.tl::before,.tl .fill{left:12px}
+  .dot{left:-41px}.noz{left:-44px}
+  .shead p{display:none}
+  .profile{gap:14px;padding:12px;margin-bottom:32px}.avatar{width:64px;height:64px}.pname{font-size:19px}.prole{font-size:13.5px}
+  .pbody{padding:30px 18px 100px}.pbody.has-tl{padding-bottom:62vh}.telem{padding:14px 18px}#tstat{display:none}
+  .pad{opacity:.35}.count .bar{flex-basis:50px}
+  .kv div{flex:1 1 50%;border-bottom:1px solid var(--line)}
+}
+@media (min-width:901px) and (max-width:1100px){.tile{grid-column:span 6}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<header class="hud">
+  <a href="#top"><b>DHYEY SOJITRA</b> / AEROSPACE</a>
+  <nav><a href="#projects">Projects</a><a href="#about">About me</a><a href="#contact">Contact</a></nav>
+  <div>ALT <span class="alt" id="alt">0000</span> m</div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <canvas id="plume"></canvas>
+  <div class="pad" aria-hidden="true">
+    <div class="tower"></div>
+    <div class="hrocket" id="hrocket">
+      <svg viewBox="0 0 40 150">
+        <defs>
+          <linearGradient id="body" x1="0" x2="1"><stop offset="0" stop-color="#8f9bab"/><stop offset=".45" stop-color="#eef2f6"/><stop offset="1" stop-color="#5f6a78"/></linearGradient>
+          <linearGradient id="fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset=".22" stop-color="#ffc24a"/><stop offset=".65" stop-color="#ff6a2b"/><stop offset="1" stop-color="#ff6a2b" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g id="hlegL" transform="rotate(0 11 80)"><line x1="11" y1="80" x2="11" y2="54" stroke="#4a5563" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="52" width="6" height="2.4" rx="1" fill="#6c7785"/></g>
+        <g id="hlegR" transform="rotate(0 29 80)"><line x1="29" y1="80" x2="29" y2="54" stroke="#4a5563" stroke-width="2.4" stroke-linecap="round"/><rect x="26" y="52" width="6" height="2.4" rx="1" fill="#6c7785"/></g>
+        <path d="M20 2 C28 14 30 26 30 36 L30 92 L10 92 L10 36 C10 26 12 14 20 2Z" fill="url(#body)"/>
+        <rect x="10" y="44" width="20" height="3" fill="#ff6a2b"/>
+        <circle cx="20" cy="58" r="4" fill="#0b0f15" stroke="#5ad1ff" stroke-width="1"/>
+        <path d="M13 92 L27 92 L25 99 L15 99Z" fill="#3b4552"/>
+        <g id="hflame" transform="translate(0 99) scale(1 0)">
+          <path d="M14 0 Q20 60 20 60 Q20 60 26 0Z" fill="url(#fl)"/>
+          <path d="M17 0 Q20 28 20 28 Q20 28 23 0Z" fill="#fff"/>
+        </g>
+      </svg>
+    </div>
+    <div class="base"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero-text">
+      <!-- EDIT: put a square headshot at images/profile.jpg -->
+      <div class="profile">
+        <div class="avatar"><figure class="media" data-label=""><img src="images/profile.jpg" alt="Dhyey Sojitra"></figure></div>
+        <div class="pinfo">
+          <div class="pname">Dhyey Sojitra</div>
+          <div class="prole">Rockets, propulsion and avionics. Based in the UK.</div>
+          <a class="plink" href="#about">Read my profile ↓</a>
+        </div>
+      </div>
+      <h1>I build things<br><span>that fly.</span></h1>
+      <p class="lede">Solid rocket motors, flight computers, thrust vector control and aircraft. Every project here failed at least once before it worked. This is the record of both.</p>
+      <div class="count"><span class="t" id="tminus">T-03</span><span class="bar"><i id="tbar"></i></span><span id="tmsg">COUNTDOWN</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROJECT GRID ================= -->
+<section class="block" id="projects">
+  <div class="wrap">
+    <div class="shead reveal"><span class="idx">01</span><h2>Projects</h2><p>Click any project to open it</p></div>
+    <div class="grid">
+
+      <a class="tile wide reveal" href="#p/rockets">
+        <figure class="media cover" data-label="images/cover-rockets.jpg"><img src="images/cover-rockets.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">RKT · 3 BUILDS</span><span class="status s-ok">Flown · 520 m</span></div>
+          <h3>Rockets</h3><span class="sub">From a motor failure on the pad, to a 520 m flight with my own avionics, to a finless TVC rocket.</span>
+          <span class="open">OPEN TIMELINE →</span></div>
+      </a>
+
+      <a class="tile wide reveal" href="#p/motors">
+        <figure class="media cover" data-label="images/cover-motors.jpg"><img src="images/cover-motors.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">MTR · 6 FIRINGS</span><span class="status s-ok">200 N+</span></div>
+          <h3>Solid Rocket Motors</h3><span class="sub">Six static-fired motors, from KNO₃ and sugar to a CNC-machined KNSB finocyl motor.</span>
+          <span class="open">OPEN TIMELINE →</span></div>
+      </a>
+
+      <a class="tile reveal" href="#p/rc">
+        <figure class="media cover" data-label="images/cover-rc.jpg"><img src="images/cover-rc.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">RC · 2 BUILDS</span><span class="status s-ok">Flew</span></div>
+          <h3>RC Plane</h3><span class="sub">Failed at 13. Rebuilt with physics at 16, and it flew.</span>
+          <span class="open">OPEN TIMELINE →</span></div>
+      </a>
+
+      <a class="tile reveal" href="#p/cubesat">
+        <figure class="media cover" data-label="images/cover-cubesat.jpg"><img src="images/cover-cubesat.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">SAT-01</span><span class="status s-done">Completed</span></div>
+          <h3>1U CubeSat</h3><span class="sub">PCB, telemetry and antenna deployment at STAR Lab.</span>
+          <span class="open">OPEN PROJECT →</span></div>
+      </a>
+
+      <a class="tile reveal" href="#p/vanguard">
+        <figure class="media cover" data-label="images/cover-vanguard.jpg"><img src="images/cover-vanguard.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">SW-01</span><span class="status s-done">Shipped</span></div>
+          <h3>Vanguard Defense</h3><span class="sub">Satellite image annotation tool, built in a team of eight.</span>
+          <span class="open">OPEN PROJECT →</span></div>
+      </a>
+
+      <a class="tile wide reveal" href="#p/cad">
+        <figure class="media cover" data-label="images/cover-cad.jpg"><img src="images/cover-cad.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">CAD · PRINTS</span><span class="status s-done">Gallery</span></div>
+          <h3>CAD &amp; 3D Prints</h3><span class="sub">Nozzles, gimbal mounts, PCBs and printed parts. Onshape, KiCad, Eagle.</span>
+          <span class="open">OPEN GALLERY →</span></div>
+      </a>
+
+      <a class="tile wide reveal" href="#p/tedx">
+        <figure class="media cover" data-label="images/cover-tedx.jpg"><img src="images/cover-tedx.jpg" alt=""></figure>
+        <div class="meta"><div class="row"><span class="code">TALK</span><span class="status s-done">Delivered</span></div>
+          <h3>TEDx Talk</h3><span class="sub">Add the talk title here.</span>
+          <span class="open">OPEN →</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ME ================= -->
+<section class="block" id="about">
+  <div class="wrap">
+    <div class="shead reveal"><span class="idx">02</span><h2>About me</h2><p>Built, broken, rebuilt</p></div>
+    <div class="about reveal">
+      <aside class="pcard">
+        <figure class="media" data-label="images/me.jpg"><img src="images/me.jpg" alt="Dhyey Sojitra"></figure>
+        <div class="pcard-body">
+          <div class="pcard-name">Dhyey Sojitra</div>
+          <div class="pcard-role">Rocketry, propulsion &amp; avionics</div>
+          <!-- EDIT: quick facts -->
+          <dl class="facts">
+            <dt>Based in</dt><dd>United Kingdom</dd>
+            <dt>Originally from</dt><dd>Surat, India</dd>
+            <dt>Education</dt><dd>IB Diploma · HL Maths AA &amp; HL Physics</dd>
+          </dl>
+        </div>
+      </aside>
+      <div class="bio">
+        <!-- EDIT: tweak any of this so it sounds like you -->
+        <p class="bio-lead">I'm Dhyey. I design, build and fly rockets, and I learn mostly by getting things wrong first.</p>
+        <p>It started in a field in Surat, watching a model rocket leave the ground and disappear in seconds. Years later I watched Falcon 9 land for the first time and wanted to understand every part of how a system that big could fly and come back down. Since then I have built solid rocket motors, flight computers, aircraft and a CubeSat prototype, first in India and now in the UK.</p>
+        <p>Almost everything I have built failed before it worked. My first rocket never left the pad when its motor failed, which pushed me back to first principles and six motor iterations later to a CNC-machined KNSB motor producing over 200 N. My first RC plane never flew at 13. I rebuilt it at 16 using the lift equation and thrust-to-weight sizing from HL Physics and Maths, and it flew. The difference was not effort, it was understanding.</p>
+        <p>Right now I am building a finless rocket stabilised by thrust vector control, tuning its PID controller in a Simulink model before flight, and contributing to a research project comparing five propellant formulations through static-fire testing.</p>
+        <p>What I enjoy most is the full loop: turning maths and physics into hardware, testing it for real, and using the data to make the next version better. Long term, I want to build my own company in rocketry and space technology.</p>
+
+        <div class="skills">
+          <div><h4>Focus</h4><div class="chips"><span class="chip">Solid propulsion</span><span class="chip">Avionics &amp; PCBs</span><span class="chip">Control systems</span><span class="chip">Flight dynamics</span></div></div>
+          <div><h4>Tools</h4><div class="chips"><span class="chip">Onshape</span><span class="chip">KiCad</span><span class="chip">Eagle</span><span class="chip">Simulink</span><span class="chip">CNC machining</span><span class="chip">PCB etching</span><span class="chip">3D printing</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="block contact" id="contact">
+  <div class="wrap">
+    <div class="shead reveal"><span class="idx">03</span><h2>Contact</h2><p>Apogee reached</p></div>
+    <h2 class="reveal">Let's build something<br><span>that flies.</span></h2>
+    <div class="links reveal">
+      <!-- EDIT: your real email and links -->
+      <a class="btn pri" href="mailto:you@example.com">Email me</a>
+      <a class="btn" href="#">LinkedIn</a>
+      <a class="btn" href="#">GitHub</a>
+      <a class="btn" href="#">CV (PDF)</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer><span>© 2026 Dhyey Sojitra</span><span>Built, broken, rebuilt.</span></footer>
+
+<!-- ================= PROJECT OVERLAY ================= -->
+<div class="ov" id="ov" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <div class="panel" role="dialog" aria-modal="true">
+    <div class="telem"><span class="rec"></span><span id="tcode"><b>---</b></span><span id="tstat">---</span>
+      <button class="close" id="close">CLOSE ✕</button></div>
+    <div class="pbody" id="pbody"></div>
+  </div>
+</div>
+
+<!-- ================= PROJECT CONTENT =================
+     Each <template> is one project page. Search EDIT for places to fill in. -->
+
+<template id="t-rockets" data-code="RKT · ROCKETS" data-status="3 builds · 1 flown">
+  <div class="phead"><span class="code">RKT · TIMELINE</span><h2>Rockets</h2>
+    <p>Three rockets, each one built on what the last one taught me.</p></div>
+  <div class="tl">
+    <div class="fill"></div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">RKT-01 <span class="status s-fail">Motor failure</span></span><h3>First rocket</h3>
+        <p>Built in India around a KNO₃ and sugar motor. On launch day the motor failed and it never left the ground.</p>
+        <!-- EDIT: date, location, what exactly failed -->
+        <p class="lesson" style="margin-top:12px">That failure is why I went back to first principles instead of guessing.</p></div>
+      <!-- add more photos: copy one <figure> line and change the file name -->
+      <div class="gallery">
+        <figure class="media" data-label="images/rocket-01.jpg"><img src="images/rocket-01.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-01-2.jpg"><img src="images/rocket-01-2.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-01-3.jpg"><img src="images/rocket-01-3.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-01-4.jpg"><img src="images/rocket-01-4.jpg" alt=""></figure>
+      </div>
+    </div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">RKT-02 <span class="status s-ok">Flown · 520 m</span></span><h3>Flight computer rocket</h3>
+        <p>An 800 g rocket carrying a flight computer I designed from scratch: a 2-layer KiCad PCB with an IMU, barometric altimeter and live telemetry. It reached 520 m and logged the whole flight, giving me real data to check my trajectory model against.</p>
+        <span class="change">800 g · 520 m · custom avionics</span></div>
+      <!-- add more photos: copy one <figure> line and change the file name -->
+      <div class="gallery">
+        <figure class="media" data-label="images/rocket-02-launch.jpg"><img src="images/rocket-02-launch.jpg" alt=""></figure>
+        <figure class="media" data-label="images/flight-computer.jpg"><img src="images/flight-computer.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-02-3.jpg"><img src="images/rocket-02-3.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-02-4.jpg"><img src="images/rocket-02-4.jpg" alt=""></figure>
+      </div>
+    </div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">RKT-03 <span class="status s-wip">In development</span></span><h3>TVC rocket</h3>
+        <p>No fins. It stays upright by steering its own thrust through a gimballed motor, the same idea that lets Falcon 9 land. I used rotational dynamics to model how gimbal angle affects attitude, then built a Simulink model of the rocket and controller to tune the PID loop before flight.</p>
+        <span class="change">Gimballed motor · PID · Simulink</span></div>
+      <div class="gallery">
+        <figure class="media" data-label="images/tvc-mount.jpg"><img src="images/tvc-mount.jpg" alt=""></figure>
+        <figure class="media" data-label="images/tvc-simulink.png"><img src="images/tvc-simulink.png" alt=""></figure>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="t-motors" data-code="MTR · MOTORS" data-status="6 static fires">
+  <div class="phead"><span class="code">MTR · TIMELINE</span><h2>Solid Rocket Motors</h2>
+    <p>Six motors, static-fired one at a time. Each checkpoint is one firing and what I changed going into it.</p></div>
+  <div class="tl motor">
+    <div class="fill"></div>
+    <!-- EDIT motors 2 to 4: what you changed each time and what happened -->
+    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 01</span><h3>First static fire</h3><p>KNO₃ and sugar propellant. The baseline: getting a motor to burn at all.</p><span class="change">KNO₃ / sugar</span></div>
+      <figure class="media" data-label="images/motor-1.jpg"><img src="images/motor-1.jpg" alt=""></figure></div>
+    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Describe what you changed after motor 1 and what happened.</p><span class="change">Change: ___</span></div>
+      <figure class="media" data-label="images/motor-2.jpg"><img src="images/motor-2.jpg" alt=""></figure></div>
+    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Describe what you changed after motor 2 and what happened.</p><span class="change">Change: ___</span></div>
+      <figure class="media" data-label="images/motor-3.jpg"><img src="images/motor-3.jpg" alt=""></figure></div>
+    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 04</span><h3>Fourth firing</h3><p>Describe what you changed after motor 3 and what happened.</p><span class="change">Change: ___</span></div>
+      <figure class="media" data-label="images/motor-4.jpg"><img src="images/motor-4.jpg" alt=""></figure></div>
+    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 05</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
+      <figure class="media" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div>
+    <div class="step final"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. Over 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, swing performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
+      <!-- add more photos: copy one <figure> line and change the file name -->
+      <div class="gallery">
+        <figure class="media" data-label="images/motor-final.jpg"><img src="images/motor-final.jpg" alt=""></figure>
+        <figure class="media" data-label="images/motor-final-2.jpg"><img src="images/motor-final-2.jpg" alt=""></figure>
+        <figure class="media" data-label="images/motor-final-3.jpg"><img src="images/motor-final-3.jpg" alt=""></figure>
+        <figure class="media" data-label="images/motor-final-4.jpg"><img src="images/motor-final-4.jpg" alt=""></figure>
+      </div></div>
+  </div>
+  <p style="color:var(--muted);margin-top:44px;max-width:640px">Now contributing to a research project with a US university student, comparing five propellant formulations through static-fire testing.</p>
+</template>
+
+<template id="t-rc" data-code="RC · AIRCRAFT" data-status="2 builds · 1 flown">
+  <div class="phead"><span class="code">RC · TIMELINE</span><h2>RC Plane</h2>
+    <p>The same plane, built twice, three years apart.</p></div>
+  <div class="tl">
+    <div class="fill"></div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">AGE 13 <span class="status s-fail">Never flew</span></span><h3>Attempt one</h3>
+        <p>Built from scratch with no real way of sizing anything. It never got off the ground.</p>
+        <!-- EDIT: what went wrong? too heavy, underpowered, wing too small? --></div>
+      <figure class="media" data-label="images/rc-01.jpg"><img src="images/rc-01.jpg" alt=""></figure>
+    </div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">AGE 16 <span class="status s-ok">Flew</span></span><h3>Rebuilt with the physics</h3>
+        <p>Using HL Physics and Maths, I used the lift equation to size the wing for my target weight, and chose the motor for the thrust-to-weight ratio it needed.</p>
+        <span class="change">Wing sized with lift equation · motor sized for T:W</span>
+        <p class="lesson" style="margin-top:14px">The difference between the two attempts was not effort. It was understanding.</p></div>
+      <div class="gallery">
+        <figure class="media" data-label="images/rc-02.jpg"><img src="images/rc-02.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rc-02-flight.jpg"><img src="images/rc-02-flight.jpg" alt=""></figure>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="t-cubesat" data-code="SAT-01 · CUBESAT" data-status="Completed">
+  <div class="phead"><span class="code">SAT-01 · STAR LAB</span><h2>1U CubeSat Prototype</h2>
+    <p>A team build under strict mass and size limits, where every component was a trade-off.</p></div>
+  <div class="kv"><div><dt>Form</dt><dd>1U (10 cm cube)</dd></div><div><dt>PCB</dt><dd>Eagle, etched in-house</dd></div><div><dt>My role</dt><dd>PCB · telemetry · antenna</dd></div></div>
+  <div class="ptext">
+    <div><p>At STAR Lab, our team built a 1U CubeSat prototype. I designed the PCB in Eagle and etched it in-house, wrote the code to send orientation data down to a ground station, and built the antenna deployment mechanism.</p>
+      <p class="lesson">Every component choice was a trade-off between weight and space.</p></div>
+    <div class="gallery">
+      <figure class="media" data-label="images/cubesat.jpg"><img src="images/cubesat.jpg" alt=""></figure>
+      <figure class="media" data-label="images/cubesat-pcb.jpg"><img src="images/cubesat-pcb.jpg" alt=""></figure>
+      <figure class="media" data-label="images/cubesat-antenna.jpg"><img src="images/cubesat-antenna.jpg" alt=""></figure>
+      <figure class="media" data-label="images/cubesat-ground.jpg"><img src="images/cubesat-ground.jpg" alt=""></figure>
+    </div>
+  </div>
+</template>
+
+<template id="t-vanguard" data-code="SW-01 · VANGUARD DEFENSE" data-status="Shipped">
+  <div class="phead"><span class="code">SW-01 · INTERNSHIP</span><h2>Vanguard Defense</h2>
+    <p>Computer vision for satellite imagery, through a Harvard entrepreneurship programme.</p></div>
+  <div class="kv"><div><dt>Team</dt><dd>8</dd></div><div><dt>Product</dt><dd>Annotation tool</dd></div><div><dt>My role</dt><dd>Datasets · tool · pitch</dd></div></div>
+  <div class="ptext">
+    <div><p>I interned at Vanguard Defense, a computer-vision startup. Our team of eight built a tool to detect and label vehicles in satellite images, used to train their model.</p>
+      <p>I researched suitable datasets, built the annotation tool and presented the final product to the founder. It was my first time pitching software as part of a team.</p></div>
+    <figure class="media" data-label="images/vanguard-tool.png"><img src="images/vanguard-tool.png" alt=""></figure>
+  </div>
+</template>
+
+<template id="t-cad" data-code="CAD · GALLERY" data-status="Onshape · KiCad · Eagle">
+  <div class="phead"><span class="code">CAD · PRINTS</span><h2>CAD &amp; 3D Prints</h2>
+    <p>The design side of the projects. Rename the captions and add or remove tiles as you like.</p></div>
+  <div class="gallery" style="grid-template-columns:repeat(3,1fr);margin-top:32px">
+    <!-- EDIT captions -->
+    <figure class="media" data-label="images/cad-1.png  ·  Nozzle, Onshape"><img src="images/cad-1.png" alt=""></figure>
+    <figure class="media" data-label="images/cad-2.png  ·  TVC gimbal mount"><img src="images/cad-2.png" alt=""></figure>
+    <figure class="media" data-label="images/cad-3.png  ·  Flight computer PCB"><img src="images/cad-3.png" alt=""></figure>
+    <figure class="media" data-label="images/print-1.jpg  ·  3D print"><img src="images/print-1.jpg" alt=""></figure>
+    <figure class="media" data-label="images/print-2.jpg  ·  3D print"><img src="images/print-2.jpg" alt=""></figure>
+    <figure class="media" data-label="images/print-3.jpg  ·  3D print"><img src="images/print-3.jpg" alt=""></figure>
+  </div>
+</template>
+
+<template id="t-tedx" data-code="TALK · TEDx" data-status="Delivered">
+  <div class="phead"><span class="code">TALK</span><h2>TEDx Talk</h2>
+    <!-- EDIT: talk title, event, date and summary -->
+    <p>Add the talk title, the event and when you gave it.</p></div>
+  <div class="ptext">
+    <div><p>Add a two or three line summary of what the talk was about.</p>
+      <a class="btn pri" href="#">Watch the talk →</a></div>
+    <figure class="media" data-label="images/tedx.jpg"><img src="images/tedx.jpg" alt=""></figure>
+  </div>
+</template>
+
+<div class="lb" id="lb" aria-hidden="true">
+  <div class="lbbg"></div>
+  <img id="lbimg" alt="" style="display:none">
+  <div class="ui"><button class="lbclose" id="lbclose">CLOSE ✕</button>
+    <button class="lbbtn prev" id="lbprev" aria-label="Previous photo">←</button>
+    <button class="lbbtn next" id="lbnext" aria-label="Next photo">→</button>
+    <div class="lbcount" id="lbcount"></div></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+
+/* image slots: show a labelled placeholder until the photo exists */
+function wireImages(root){root.querySelectorAll('.media img:not(.bgblur)').forEach(img=>{
+  const fig=img.parentNode;
+  const fail=()=>{fig.classList.add('empty');img.remove()};
+  // show the whole photo: no cropping inside projects
+  const ok=()=>{
+    if(fig.classList.contains('cover')||fig.closest('.avatar')||fig.closest('.pcard'))return;
+    const w=img.naturalWidth,h=img.naturalHeight,portrait=h>w*1.05;
+    if(fig.closest('.gallery')||portrait){
+      if(!fig.querySelector('.bgblur')){const b=document.createElement('img');b.src=img.currentSrc||img.src;b.className='bgblur';b.alt='';fig.insertBefore(b,img)}
+      fig.classList.add('fit');
+      if(portrait&&!fig.closest('.gallery'))fig.style.aspectRatio='5/4';
+    }else fig.style.aspectRatio=w+'/'+h;
+  };
+  if(img.complete){img.naturalWidth?ok():fail()}else{img.addEventListener('load',ok);img.addEventListener('error',fail)}
+})}
+wireImages(document);
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- countdown ---------- */
+let ready=false;
+(function(){
+  const t=$('#tminus'),bar=$('#tbar'),msg=$('#tmsg');let n=3;
+  requestAnimationFrame(()=>bar.style.transform='scaleX(.33)');
+  const iv=setInterval(()=>{n--;
+    if(n>0){t.textContent='T-0'+n;bar.style.transform=`scaleX(${(4-n)/3})`}
+    else{clearInterval(iv);t.textContent='T-00';bar.style.transform='scaleX(1)';msg.textContent='SCROLL TO LAUNCH ↓';msg.style.color='var(--flame)';ready=true}
+  },1000);
+})();
+
+/* ---------- starfield ---------- */
+const sc=$('#stars'),sx=sc.getContext('2d');let SW,SH,stars=[];const dpr=Math.min(2,devicePixelRatio||1);
+function sizeStars(){SW=sc.width=innerWidth*dpr;SH=sc.height=innerHeight*dpr;sc.style.width=innerWidth+'px';sc.style.height=innerHeight+'px';
+  stars=Array.from({length:Math.round(innerWidth*innerHeight/5200)},()=>({x:Math.random()*SW,y:Math.random()*SH,z:Math.random()*.9+.1}))}
+sizeStars();addEventListener('resize',sizeStars);
+
+/* ---------- hero launch: rocket + smoke plume ---------- */
+const hero=$('#hero'),rk=$('#hrocket'),hfl=$('#hflame'),pc=$('#plume'),px=pc.getContext('2d');let parts=[];
+function sizePlume(){pc.width=pc.clientWidth*dpr;pc.height=pc.clientHeight*dpr}
+sizePlume();addEventListener('resize',sizePlume);
+let lastY=scrollY,vel=0,smooth=0,t0=performance.now();
+let mode='launch',legK=0,everFlown=false,landedOnce=false,burst=0;
+const hlegL=$('#hlegL'),hlegR=$('#hlegR');
+
+function frame(now){
+  const t=(now-t0)/1000;
+  const hh=hero.offsetHeight, p=Math.max(0,Math.min(1,scrollY/(hh*.85)));
+  // direction: scrolling down = launch, scrolling back up = return and land
+  if(p>smooth+.002)mode='launch';else if(p<smooth-.002)mode='land';
+  smooth+=(p-smooth)*(mode==='land'?.026:.14);          // slower on the way down so the landing is visible
+  if(Math.abs(p-smooth)<.0005)smooth=p;
+  const dy=scrollY-lastY;lastY=scrollY;vel+=(Math.abs(dy)-vel)*.12;
+
+  const lift=Math.pow(smooth,1.7)*(innerHeight*1.25);
+  const onPad=lift<1.2;
+  const descending=mode==='land'&&!onPad;
+  // small steering corrections on the way down, settling as it nears the pad
+  const tilt=descending?Math.sin(t*2.4)*5*Math.min(1,lift/220):0;
+  const shake=mode==='launch'&&smooth>0.01&&smooth<.25?(Math.sin(t*90)*1.2):0;
+  rk.style.transform=`translate(${shake}px,${-lift}px) rotate(${tilt.toFixed(2)}deg)`;
+  rk.style.transformOrigin='50% 70%';
+
+  // legs: out for landing and while sitting on the pad after a landing, fold away on launch
+  let legT=legK;
+  if(descending)legT=lift<innerHeight*.55?1:0;
+  else if(mode==='launch'&&lift>30)legT=0;
+  legK+=(legT-legK)*.09;
+  const ke=1-Math.pow(1-legK,3);
+  hlegL.setAttribute('transform',`rotate(${(-150*ke).toFixed(1)} 11 80)`);
+  hlegR.setAttribute('transform',`rotate(${(150*ke).toFixed(1)} 29 80)`);
+
+  // flame: idle before launch, full burn climbing, landing burn coming down, off after touchdown
+  let f=0;
+  if(mode==='launch'||!everFlown){
+    if(ready&&onPad&&!landedOnce)f=.25+Math.sin(t*40)*.04;
+    if(smooth>0.005)f=Math.min(2.3,1+smooth*1.4+vel/30)+Math.sin(t*55)*.08;
+  }else if(descending){
+    f=Math.min(2,.8+(1-Math.min(1,lift/(innerHeight*1.1)))*1.3)+Math.sin(t*55)*.08;
+  }
+  if(smooth>0.02)everFlown=true;
+  hfl.setAttribute('transform',`translate(0 99) rotate(${(-tilt*1.6).toFixed(2)} 20 0) scale(1 ${Math.max(0,f).toFixed(3)})`);
+
+  // touchdown
+  if(mode==='land'&&onPad&&everFlown&&!landedOnce){landedOnce=true;burst=45;
+    $('#tmsg').textContent='TOUCHDOWN ✓  SCROLL TO RELAUNCH ↓';$('#tmsg').style.color='var(--ok)'}
+  if(mode==='launch'&&smooth>0.02&&landedOnce){landedOnce=false;
+    $('#tmsg').textContent='SCROLL TO LAUNCH ↓';$('#tmsg').style.color='var(--flame)'}
+
+  // smoke at the pad while the engine is firing low down
+  const W=pc.width,H=pc.height,cx=W/2,base=H-14*dpr;
+  const firingLow=f>.5&&lift<innerHeight*.6;
+  let emit=firingLow?Math.round(3+vel/4+(descending?2:0)):(ready&&onPad&&!landedOnce&&Math.random()<.25?1:0);
+  const hot=firingLow;
+  if(burst){emit+=burst;burst=0}
+  for(let i=0;i<emit;i++){
+    const dir=Math.random()<.5?-1:1;
+    parts.push({x:cx+(Math.random()-.5)*20*dpr,y:base-Math.random()*6*dpr,vx:dir*(.4+Math.random()*Math.random()*5)*dpr,vy:-(Math.random()*1.4)*dpr,r:(6+Math.random()*12)*dpr,a:hot?.45:.3,life:1,hot})}
+  px.clearRect(0,0,W,H);
+  parts=parts.filter(q=>q.life>0);
+  for(const q of parts){q.x+=q.vx;q.y+=q.vy;q.vx*=.975;q.vy-=.006*dpr;q.r+=.5*dpr;q.life-=.006+Math.abs(q.x-cx)/W*.012;
+    const g=px.createRadialGradient(q.x,q.y,0,q.x,q.y,q.r);
+    const warm=q.hot&&q.life>.85;
+    g.addColorStop(0,warm?`rgba(255,170,90,${q.a*q.life})`:`rgba(150,160,175,${q.a*q.life*.55})`);
+    g.addColorStop(1,'rgba(120,130,145,0)');
+    px.fillStyle=g;px.beginPath();px.arc(q.x,q.y,q.r,0,7);px.fill()}
+  // engine glow on the pad
+  if(firingLow){const gl=px.createRadialGradient(cx,base,0,cx,base,120*dpr);
+    gl.addColorStop(0,`rgba(255,120,50,${.35*(1-lift/(innerHeight*.6))})`);gl.addColorStop(1,'rgba(255,120,50,0)');
+    px.fillStyle=gl;px.fillRect(0,0,W,H)}
+
+  // altitude readout across the whole page
+  const max=document.documentElement.scrollHeight-innerHeight;
+  const pp=max>0?Math.min(1,scrollY/max):0;
+  $('#alt').textContent=String(Math.round(pp*520)).padStart(4,'0');
+
+  // starfield drifts down as you climb
+  sx.clearRect(0,0,SW,SH);
+  for(const s of stars){const y=(s.y+scrollY*s.z*.3*dpr)%SH;sx.fillStyle=`rgba(220,230,245,${s.z*.8})`;sx.fillRect(s.x,y,s.z*1.6*dpr,s.z*1.6*dpr)}
+
+  // timeline fill inside an open project
+  if(curTl){const r=curTl.getBoundingClientRect(),pb=pbody.getBoundingClientRect();
+    const prog=Math.max(0,Math.min(1,(pb.top+pb.height*.55-r.top)/r.height));
+    curTl.querySelector('.fill').style.height=(prog*(r.height-16))+'px';
+    const line=pb.top+pb.height*.55, atEnd=pbody.scrollTop+pbody.clientHeight>=pbody.scrollHeight-4;
+    let act=-1;steps.forEach((st,i)=>{const on=st.getBoundingClientRect().top<line||atEnd;st.classList.toggle('lit',on);if(on)act=i});
+    if(act!==curAct){
+      const prev=steps[curAct];
+      if(prev){prev.classList.remove('active');prev.classList.add('off');setTimeout(()=>prev.classList.remove('off'),550)}
+      const nx=steps[act];if(nx){nx.classList.remove('off');nx.classList.add('active')}
+      curAct=act}}
+
+  requestAnimationFrame(frame);
+}
+
+/* ---------- project overlay (each project has its own link, e.g. #p/motors) ---------- */
+const ov=$('#ov'),pbody=$('#pbody');let curTl=null,steps=[],curAct=-1,fromTile=null;
+function openProject(id){
+  const tpl=document.getElementById('t-'+id);if(!tpl)return;
+  pbody.innerHTML='<div class="pinner"></div>';pbody.firstChild.appendChild(tpl.content.cloneNode(true));pbody.scrollTop=0;
+  $('#tcode').innerHTML='<b>'+tpl.dataset.code+'</b>';$('#tstat').textContent=tpl.dataset.status;
+  wireImages(pbody);
+  curTl=pbody.querySelector('.tl');steps=[...pbody.querySelectorAll('.step')];curAct=-1;
+  pbody.classList.toggle('has-tl',!!curTl);
+  // expand the panel out of the clicked tile to full screen
+  const panel=ov.querySelector('.panel');panel.classList.remove('anim');
+  panel.style.clipPath=fromTile?rectInset(fromTile):'inset(50% 50% 50% 50% round 6px)';
+  void panel.offsetWidth;panel.classList.add('anim');
+  ov.classList.add('on');ov.setAttribute('aria-hidden','false');document.body.classList.add('lock');
+  requestAnimationFrame(()=>panel.style.clipPath='inset(0 0 0 0 round 0px)');
+  setTimeout(()=>$('#close').focus({preventScroll:true}),650);
+}
+let pushed=false;
+function rectInset(el){const r=el.getBoundingClientRect(),W=innerWidth,H=innerHeight;
+  return `inset(${Math.max(0,r.top)}px ${Math.max(0,W-r.right)}px ${Math.max(0,H-r.bottom)}px ${Math.max(0,r.left)}px round 4px)`}
+function closeProject(){
+  if(!ov.classList.contains('on'))return;
+  const panel=ov.querySelector('.panel');
+  panel.style.clipPath=fromTile?rectInset(fromTile):'inset(50% 50% 50% 50% round 6px)';
+  ov.classList.remove('on');ov.setAttribute('aria-hidden','true');document.body.classList.remove('lock');curTl=null;steps=[];curAct=-1;
+  if(pushed){pushed=false;try{history.back()}catch(e){}}
+  else if(location.hash.startsWith('#p/')){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+}
+/* tiles open their project directly (works in previews and on the live site) */
+document.querySelectorAll('.tile').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const id=a.getAttribute('href').slice(3);
+  fromTile=a;openProject(id);
+  try{history.pushState({p:id},'','#p/'+id);pushed=true}catch(err){pushed=false}
+}));
+/* browser back button closes an open project; a shared #p/... link opens it on load */
+addEventListener('popstate',()=>{const m=location.hash.match(/^#p\/(\w+)/);
+  if(m){fromTile=null;openProject(m[1])}else if(ov.classList.contains('on')){pushed=false;closeProject()}});
+function route(){const m=location.hash.match(/^#p\/(\w+)/);if(m){fromTile=null;openProject(m[1])}}
+$('#close').onclick=closeProject;$('#scrim').onclick=closeProject;
+addEventListener('keydown',e=>{if(e.key==='Escape')closeProject()});
+
+/* ---------- photo viewer: click a photo to expand it ---------- */
+const lb=$('#lb'),lbimg=$('#lbimg');let lbList=[],lbI=0,lbFrom=null;
+function fitRect(img){const nw=img.naturalWidth||1600,nh=img.naturalHeight||1200,
+  mw=innerWidth*(innerWidth<900?.94:.84),mh=innerHeight*.8,k=Math.min(mw/nw,mh/nh,2.5),w=nw*k,h=nh*k;
+  return{left:(innerWidth-w)/2,top:(innerHeight-h)/2,width:w,height:h}}
+function place(r){for(const k in r)lbimg.style[k]=r[k]+'px'}
+function lbShow(i,anim){
+  lbI=(i+lbList.length)%lbList.length;const src=lbList[lbI];lbFrom=src;
+  $('#lbcount').textContent=(lbI+1)+' / '+lbList.length;
+  if(anim){lbimg.style.display='block';lbimg.style.transition='none';lbimg.src=src.currentSrc||src.src;const r=src.getBoundingClientRect();
+    place({left:r.left,top:r.top,width:r.width,height:r.height});lbimg.style.objectFit='cover';
+    void lbimg.offsetWidth;lbimg.style.transition='';lbimg.style.objectFit='contain';place(fitRect(src))}
+  else{lbimg.style.opacity=0;setTimeout(()=>{lbimg.src=src.currentSrc||src.src;place(fitRect(src));lbimg.style.opacity=1},160)}
+}
+function lbOpen(img){
+  const group=img.closest('.step')||img.closest('.ptext')||img.closest('.gallery')||img.closest('.about')||img.parentNode;
+  lbList=[...group.querySelectorAll('.media img:not(.bgblur)')].filter(x=>x.naturalWidth);
+  lb.classList.toggle('single',lbList.length<2);
+  lb.classList.add('on');lb.setAttribute('aria-hidden','false');lbShow(lbList.indexOf(img),true);
+}
+function lbClose(){if(!lb.classList.contains('on'))return;lb.classList.remove('on');lb.setAttribute('aria-hidden','true');
+  const r=lbFrom&&lbFrom.getBoundingClientRect();
+  if(r&&r.width){place({left:r.left,top:r.top,width:r.width,height:r.height})}else lbimg.style.opacity=0;
+  setTimeout(()=>{if(!lb.classList.contains('on')){lbimg.style.display='none';lbimg.removeAttribute('src');lbimg.style.opacity=1}},460)}
+document.addEventListener('click',e=>{
+  const img=e.target.closest('.pbody .media, #about .media');
+  if(img&&!img.classList.contains('empty')){const i=img.querySelector('img:not(.bgblur)');if(i&&i.naturalWidth){e.preventDefault();lbOpen(i)}}
+});
+$('#lbclose').onclick=lbClose;lb.querySelector('.lbbg').onclick=lbClose;lbimg.onclick=lbClose;
+$('#lbprev').onclick=e=>{e.stopPropagation();lbShow(lbI-1)};$('#lbnext').onclick=e=>{e.stopPropagation();lbShow(lbI+1)};
+addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;
+  if(e.key==='Escape'){e.stopImmediatePropagation();lbClose()}else if(e.key==='ArrowRight')lbShow(lbI+1);else if(e.key==='ArrowLeft')lbShow(lbI-1)},true);
+let tx=null;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+lb.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(d)>50&&lbList.length>1)lbShow(lbI+(d<0?1:-1))});
+addEventListener('resize',()=>{if(lb.classList.contains('on')&&lbList[lbI])place(fitRect(lbList[lbI]))});
+
+route();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
