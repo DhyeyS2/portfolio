@@ -34,11 +34,15 @@ main{position:relative;z-index:2}
 .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
 
 /* ---------- HERO ---------- */
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
-.hero .wrap{width:100%}
-.hero-text{position:relative;z-index:3;max-width:640px}
+.hero{position:relative;height:160vh}                       /* holds for half a screen, then the page carries on */
+.stage{--floor:76px;position:sticky;top:0;height:100vh;min-height:560px;overflow:hidden;display:flex;align-items:flex-end}
+.hero .wrap{width:100%;height:100%;padding-bottom:var(--floor)}
+.floor{position:absolute;left:0;right:0;bottom:0;height:calc(var(--floor) + 14px);z-index:0;background:linear-gradient(rgba(20,26,35,.55),rgba(6,8,11,0))}
+.ground{position:absolute;left:0;right:0;bottom:calc(var(--floor) + 14px);height:1px;z-index:1;background:linear-gradient(90deg,transparent,#2b3542 10%,#2b3542 90%,transparent)}
+.fdot{color:var(--flame)}
+.hero-text{position:relative;z-index:3;max-width:640px;height:100%;display:flex;flex-direction:column;padding-top:calc(52px + 7vh)}
 /* profile card at the top of the hero */
-.profile{display:flex;align-items:center;gap:20px;margin-bottom:36px;padding:16px 20px 16px 16px;border:1px solid var(--line);border-radius:6px;background:rgba(11,15,21,.72);backdrop-filter:blur(6px);max-width:600px}
+.profile{display:flex;align-items:center;gap:20px;margin-bottom:30px;padding:16px 20px 16px 16px;border:1px solid var(--line);border-radius:6px;background:rgba(11,15,21,.72);backdrop-filter:blur(6px);max-width:600px}
 .avatar{position:relative;flex:none;width:84px;height:84px;border-radius:50%;padding:3px;background:conic-gradient(from 200deg,var(--flame),var(--flame2),var(--line2) 60%,var(--flame))}
 .avatar .media{width:100%;height:100%;border-radius:50%;aspect-ratio:1;border:2px solid var(--bg)}
 .avatar .media.empty::after{content:"PHOTO";font-size:9px;padding:0}
@@ -50,22 +54,36 @@ main{position:relative;z-index:2}
 .chip.live{color:var(--ok);border-color:rgba(111,227,165,.35);display:inline-flex;align-items:center;gap:6px}
 .chip.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 1.8s infinite}
 .tag{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--flame);text-transform:uppercase;margin-bottom:22px}
-h1{font-size:clamp(46px,8vw,104px);line-height:.96;font-weight:600;letter-spacing:-.035em}
+h1{margin-top:34px;font-size:clamp(46px,8vw,104px);line-height:.96;font-weight:600;letter-spacing:-.035em}
 h1 span{color:var(--muted)}
-.lede{max-width:520px;margin-top:28px;font-size:19px;color:var(--muted)}
-.count{margin-top:48px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--dim);display:flex;align-items:center;gap:14px}
+.lede{max-width:520px;margin-top:6px;font-size:19px;color:var(--muted)}
+.count{margin-top:auto;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--dim);display:flex;align-items:center;gap:14px}
 .count .t{color:var(--flame2);font-size:15px;min-width:5.5ch}
 .count{flex-wrap:nowrap}.count span{white-space:nowrap}.count .bar{flex:0 1 120px;width:120px;height:2px;background:var(--line2);position:relative;overflow:hidden}
 .count .bar i{position:absolute;inset:0;background:var(--flame);transform-origin:left;transform:scaleX(0);transition:transform 1s linear}
 
 /* launch pad + rocket */
-.pad{position:absolute;right:9%;bottom:0;width:180px;height:100%;z-index:2;pointer-events:none}
-.tower{position:absolute;bottom:0;left:18px;width:14px;height:58%;border:1px solid var(--line2);border-bottom:0;background:repeating-linear-gradient(45deg,transparent 0 9px,var(--line2) 9px 10px),repeating-linear-gradient(-45deg,transparent 0 9px,var(--line2) 9px 10px)}
+.pad{position:absolute;right:9%;bottom:var(--floor);width:180px;height:100%;z-index:2;pointer-events:none;overflow:hidden}   /* nothing shows below the pad */
+.tower{position:absolute;bottom:0;left:18px;width:14px;height:min(330px,46%);border:1px solid var(--line2);border-bottom:0;background:repeating-linear-gradient(45deg,transparent 0 9px,var(--line2) 9px 10px),repeating-linear-gradient(-45deg,transparent 0 9px,var(--line2) 9px 10px)}
 .base{position:absolute;bottom:0;left:0;right:0;height:14px;z-index:3;background:linear-gradient(var(--line2),var(--bg2));border-top:1px solid #34404f}
 .hrocket{position:absolute;left:50%;bottom:-71px;width:72px;margin-left:-36px;will-change:transform;z-index:2}
 .hrocket svg{display:block;width:72px;overflow:visible}
-#plume{position:absolute;right:calc(9% - 260px);bottom:0;width:700px;height:420px;z-index:1;pointer-events:none}
+#plume{position:absolute;right:calc(9% - 260px);bottom:var(--floor);width:700px;height:420px;z-index:1;pointer-events:none}
 
+/* towed headline */
+#tether{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible}
+.thr{position:absolute;top:80%;width:.22em;height:.85em;margin-left:-.11em;transform-origin:50% 0;transform:scaleY(0);opacity:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0,#fff 0 16%,#ffe7a8 24%,var(--flame2) 38%,var(--flame) 62%,transparent 74%);border-radius:40% 40% 50% 50%;
+  filter:drop-shadow(0 0 .12em rgba(255,140,60,.95)) drop-shadow(0 .25em .35em rgba(255,106,43,.6));transition:opacity .2s}
+.thr::after{content:"";position:absolute;left:50%;top:-.05em;width:.5em;height:.22em;margin-left:-.25em;border-radius:50%;background:radial-gradient(rgba(255,190,110,.75),transparent 70%)}
+.flyword.burn .thr{opacity:1;animation:thr .07s infinite alternate}
+@keyframes thr{from{transform:scaleY(var(--th,1)) scaleX(1)}to{transform:scaleY(calc(var(--th,1)*.8)) scaleX(.86)}}
+.tdust{position:absolute;left:12%;right:12%;top:72%;height:.45em;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 50%,rgba(170,180,195,.55),rgba(120,130,145,.18) 55%,transparent 72%);filter:blur(4px);transform:scale(.4,.6)}
+.flyword.touch .tdust{animation:tdust .9s ease-out forwards}
+@keyframes tdust{0%{opacity:.9;transform:scale(.5,.6)}100%{opacity:0;transform:scale(1.9,1.4) translateY(-.08em)}}
+#rope{fill:none;stroke:var(--flame);stroke-opacity:.85;stroke-width:1.6;stroke-linecap:round}
+.flyword{position:absolute;left:0;top:0;z-index:4;display:none;white-space:nowrap;pointer-events:none;color:var(--muted);will-change:transform}
 /* ---------- SECTION HEADS ---------- */
 .block{padding:110px 0}
 .shead{display:flex;align-items:baseline;gap:18px;margin-bottom:40px;border-bottom:1px solid var(--line);padding-bottom:18px}
@@ -242,9 +260,9 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   .wrap{padding:0 18px}
   .hud{padding:14px 18px}.hud nav{display:none}
   .tile,.tile.wide{grid-column:span 12}
-  .pad{right:-10px;width:120px;opacity:.55}
+  .pad{width:84px}.tower{display:none}.hero-text{padding-right:80px}   /* rocket gets its own lane on phones */
   .hrocket,.hrocket svg{width:46px}.hrocket{margin-left:-23px;bottom:-40px}
-  #plume{right:-300px}
+
   .ptext,.about{grid-template-columns:1fr}.pcard{position:static}.pcard .media{aspect-ratio:1}.about{gap:32px}
   .step{grid-template-columns:1fr}
   .tl{padding-left:46px}.tl::before,.tl .fill{left:12px}
@@ -252,7 +270,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   .shead p{display:none}
   .profile{gap:14px;padding:12px;margin-bottom:32px}.avatar{width:64px;height:64px}.pname{font-size:19px}.prole{font-size:13.5px}
   .pbody{padding:30px 18px 100px}.pbody.has-tl{padding-bottom:62vh}.telem{padding:14px 18px}#tstat{display:none}
-  .pad{opacity:.35}.count .bar{flex-basis:50px}
+  .count .bar{flex-basis:50px}.hero{height:145vh}.stage{--floor:44px}h1{margin-top:24px}.hero-text{padding-top:calc(48px + 4vh)}
   .kv div{flex:1 1 50%;border-bottom:1px solid var(--line)}
 }
 @media (min-width:901px) and (max-width:1100px){.tile{grid-column:span 6}}
@@ -272,7 +290,13 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero">
+ <div class="stage" id="stage">
+  <div class="floor"></div>
+  <div class="ground"></div>
   <canvas id="plume"></canvas>
+  <!-- "that fly." gets towed away by the rocket -->
+  <svg id="tether" aria-hidden="true"><path id="rope" d=""/></svg>
+  <div class="flyword" id="flyword" aria-hidden="true">that fly<span class="fdot">.</span><i class="thr" style="left:20%"></i><i class="thr" style="left:46%"></i><i class="thr" style="left:72%"></i><i class="tdust"></i></div>
   <div class="pad" aria-hidden="true">
     <div class="tower"></div>
     <div class="hrocket" id="hrocket">
@@ -307,11 +331,12 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
           <a class="plink" href="#about">Read my profile ↓</a>
         </div>
       </div>
-      <h1>I build things<br><span>that fly.</span></h1>
       <p class="lede">Solid rocket motors, flight computers, thrust vector control and aircraft. Every project here failed at least once before it worked. This is the record of both.</p>
       <div class="count"><span class="t" id="tminus">T-03</span><span class="bar"><i id="tbar"></i></span><span id="tmsg">COUNTDOWN</span></div>
+      <h1 id="headline">I build things<br><span id="flyhome">that fly<span class="fdot">.</span></span></h1>
     </div>
   </div>
+ </div>
 </section>
 
 <!-- ================= PROJECT GRID ================= -->
@@ -666,20 +691,30 @@ sizeStars();addEventListener('resize',sizeStars);
 const hero=$('#hero'),rk=$('#hrocket'),hfl=$('#hflame'),pc=$('#plume'),px=pc.getContext('2d');let parts=[];
 function sizePlume(){pc.width=pc.clientWidth*dpr;pc.height=pc.clientHeight*dpr}
 sizePlume();addEventListener('resize',sizePlume);
-let lastY=scrollY,vel=0,smooth=0,t0=performance.now();
+let lastY=scrollY,vel=0,smooth=0,goal=0,autoLand=false,t0=performance.now();
+const profileCard=document.querySelector('.hero .profile');
 let mode='launch',legK=0,everFlown=false,landedOnce=false,burst=0;
 const hlegL=$('#hlegL'),hlegR=$('#hlegR');
 
 function frame(now){
   const t=(now-t0)/1000;
-  const hh=hero.offsetHeight, p=Math.max(0,Math.min(1,scrollY/(hh*.85)));
-  // direction: scrolling down = launch, scrolling back up = return and land
-  if(p>smooth+.002)mode='launch';else if(p<smooth-.002)mode='land';
-  smooth+=(p-smooth)*(mode==='land'?.026:.14);          // slower on the way down so the landing is visible
-  if(Math.abs(p-smooth)<.0005)smooth=p;
+  const range=innerHeight*.95,p=Math.max(0,Math.min(1,scrollY/range));
   const dy=scrollY-lastY;lastY=scrollY;vel+=(Math.abs(dy)-vel)*.12;
+  // scrolling down = fly, scrolling up = come home
+  if(dy>.5){if(mode!=='launch')goal=smooth;mode='launch';autoLand=false}else if(dy<-.5)mode='land';   // resume from wherever it is
+  if(mode==='launch'){
+    goal=Math.min(1,Math.max(p,goal+Math.max(0,dy)/range));         // any downward scroll pushes it up again, even mid-landing
+    smooth+=(goal-smooth)*.1;
+  }else{
+    // once your profile at the top is back in view, it lands by itself: no need to keep scrolling
+    const pr=profileCard.getBoundingClientRect(),home=pr.bottom>56&&pr.top<innerHeight;
+    autoLand=home;
+    goal=home?0:p;                                                     // lands in one go, no stopping
+    if(smooth>goal){const d=smooth-goal;smooth-=Math.min(d,.0042+.012*smooth*smooth)}   // ~2.5 s, quicker while out of view, gentle at touchdown
+  }
+  if(Math.abs(goal-smooth)<.0005)smooth=goal;
 
-  const lift=Math.pow(smooth,1.7)*(innerHeight*1.25);
+  const lift=Math.pow(smooth,1.35)*(stage.clientHeight+rk.offsetHeight+(innerWidth<900?110:160)+(fx.lr||300)+80);   // far enough to carry the words out the top
   const onPad=lift<1.2;
   const descending=mode==='land'&&!onPad;
   // small steering corrections on the way down, settling as it nears the pad
@@ -696,6 +731,8 @@ function frame(now){
   const ke=1-Math.pow(1-legK,3);
   hlegL.setAttribute('transform',`rotate(${(-150*ke).toFixed(1)} 11 80)`);
   hlegR.setAttribute('transform',`rotate(${(150*ke).toFixed(1)} 29 80)`);
+
+  flyFrame(lift);
 
   // flame: idle before launch, full burn climbing, landing burn coming down, off after touchdown
   let f=0;
@@ -758,6 +795,103 @@ function frame(now){
       curAct=act}}
 
   requestAnimationFrame(frame);
+}
+
+/* ---------- towed headline: the full stop is the knot, "that fly." is lifted off the ground ---------- */
+const stage=$('#stage'),padEl=document.querySelector('.pad'),plumeEl=$('#plume'),headline=$('#headline');
+const flyhome=$('#flyhome'),flyword=$('#flyword'),rope=$('#rope'),tether=$('#tether');
+const calmMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let fx={on:false,P:null,Pp:null,L:0,rot:0,off:null,free:false,from:null,fromLift:0,ropeA:1,shown:{x:0,y:0}};
+// launch pad sits just right of the headline, on the same ground line
+function placePad(){
+  const sr=stage.getBoundingClientRect(),hr=headline.getBoundingClientRect(),pw=padEl.offsetWidth;
+  const left=innerWidth<900?sr.width-pw-2:Math.max(12,Math.min(sr.width-pw-8,hr.right-sr.left+50));
+  padEl.style.left=left+'px';padEl.style.right='auto';
+  plumeEl.style.left=(left+pw/2-plumeEl.offsetWidth/2)+'px';plumeEl.style.right='auto';
+}
+placePad();addEventListener('resize',placePad);if(document.fonts)document.fonts.ready.then(placePad);
+const knot=r=>({x:r.left+r.width*.5,y:r.top+r.height*.73});     // centre of the full stop glyph
+function placeFly(D,rot){
+  flyword.style.transformOrigin=`${fx.off.x}px ${fx.off.y}px`;
+  flyword.style.transform=`translate(${(D.x-fx.off.x).toFixed(1)}px,${(D.y-fx.off.y).toFixed(1)}px) rotate(${rot.toFixed(2)}deg)`;
+  fx.shown={x:D.x,y:D.y};
+}
+function flyFrame(lift){
+  const sr=stage.getBoundingClientRect(),rr=rk.getBoundingClientRect();
+  const A={x:rr.left-sr.left+rr.width*.27,y:rr.top-sr.top+rr.height*.58};          // tie point on the rocket body
+  const k0=knot(flyhome.querySelector('.fdot').getBoundingClientRect());
+  const H={x:k0.x-sr.left,y:k0.y-sr.top};                                          // the dot, resting on the ground
+  const restLen=Math.hypot(A.x-H.x,A.y-H.y)*1.06;
+  const showRope=a=>{fx.ropeA+=(a-fx.ropeA)*.2;tether.style.opacity=fx.ropeA.toFixed(3)};
+  if(calmMotion){drawRope(A,H,restLen,H.y);return}
+  if(!fx.on&&(lift<0.6||(fx.home&&mode==='land'))){               // parked (or words home, rocket still coming down)
+    fx.L=restLen;drawRope(A,H,restLen,H.y);showRope(lift<0.6?1:0);if(lift<0.6)fx.home=false;return}
+  if(!fx.on){                                                                       // ignition: swap in the movable copy
+    fx.on=true;flyword.style.display='block';flyword.style.transform='none';
+    const cs=getComputedStyle(flyhome);flyword.style.font=cs.font;flyword.style.letterSpacing=cs.letterSpacing;flyword.style.lineHeight=cs.lineHeight;
+    const wr=flyword.getBoundingClientRect(),kd=knot(flyword.querySelector('.fdot').getBoundingClientRect());
+    fx.off={x:kd.x-wr.left,y:kd.y-wr.top};flyhome.style.visibility='hidden';
+    fx.P={...H};fx.Pp={...H};fx.L=restLen;fx.rot=0;fx.free=false;fx.E=null;fx.home=false;
+  }
+  // ---- coming home: the rope lets go and the words fly themselves down on retro-thrusters ----
+  if(mode==='land'&&autoLand&&!fx.free){fx.free=true;fx.from={...fx.shown};fx.fromRot=fx.rot;fx.t0=performance.now();flyword.classList.remove('touch')}
+  if(mode==='launch'&&fx.free){fx.free=false;fx.S=null;fx.E=null;fx.P={...fx.shown};fx.Pp={...fx.shown};fx.L=Math.max(40,Math.hypot(A.x-fx.P.x,A.y-fx.P.y));flyword.classList.remove('burn','touch')}
+  if(fx.free){
+    const mob=innerWidth<900,T=performance.now()-fx.t0;
+    if(!fx.S){                                   // start: where it is if on screen, otherwise entering from the top,
+      const onScreen=fx.from.y>40;               // always to the left of the rocket, never underneath it
+      const clearX=Math.min(A.x-(mob?40:70),H.x+(mob?70:360));
+      fx.S=onScreen?{x:Math.min(fx.from.x,clearX),y:fx.from.y}:{x:clearX,y:-(mob?60:120)};
+      fx.Srot=onScreen?fx.rot:0;
+    }
+    const S=fx.S,DUR=mob?1500:1700,SET=450;
+    const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2,out=x=>1-Math.pow(1-x,2.6);
+    let D,th,rot,burn=true;
+    if(T<DUR){                                   // straight diagonal descent, braking all the way down
+      const u=T/DUR;
+      D={x:S.x+(H.x-S.x)*ease(u),y:S.y+(H.y-6-S.y)*out(u)};
+      th=.8+u*u*.8;
+      rot=fx.Srot*(1-out(Math.min(1,u*2.5)))+Math.sin(T/160)*1.2;
+    }else if(T<DUR+SET){                         // settle the last few pixels, engines throttling down
+      const u=(T-DUR)/SET;
+      D={x:H.x,y:H.y-6+6*out(u)};th=1.1-u*.9;rot=0;
+    }else{
+      D={x:H.x,y:H.y};th=0;rot=0;burn=false;
+      if(!fx.home){fx.home=true;flyword.classList.add('touch')}
+    }
+    flyword.classList.toggle('burn',burn);
+    flyword.style.setProperty('--th',th.toFixed(2));
+    fx.rot=rot;placeFly(D,rot);
+    showRope(0);drawRope(A,A,0,H.y);
+    if(fx.home&&T>DUR+SET+500){fx.on=false;fx.free=false;fx.S=null;flyword.classList.remove('burn','touch');flyword.style.display='none';flyhome.style.visibility='';fx.ropeA=0}
+    return;
+  }
+  // ---- going up: the dot is tied to the rope, the word is a rigid bar hanging from the dot ----
+  // two verlet points: P = the dot, E = the far end of "that". Gravity, ground contact with friction,
+  // an inextensible rope (P to rocket) and a rigid bar (P to E), solved in small sub-steps so it stays smooth.
+  if(!fx.E){fx.lr=fx.off.x*.92;const a=fx.rot*Math.PI/180;fx.E={x:fx.P.x-fx.lr*Math.cos(a),y:fx.P.y-fx.lr*Math.sin(a)};fx.Ep={...fx.E}}
+  const P=fx.P,E=fx.E,G=H.y,N=4,g=.62/(N*N);
+  for(let n=0;n<N;n++){
+    for(const [X,Xp] of [[P,'Pp'],[E,'Ep']]){
+      const v={x:(X.x-fx[Xp].x)*.984,y:(X.y-fx[Xp].y)*.984};      // air resistancefx[Xp]={x:X.x,y:X.y};X.x+=v.x;X.y+=v.y+g;
+    }
+    for(let i=0;i<3;i++){
+      let dx=P.x-A.x,dy=P.y-A.y,d=Math.hypot(dx,dy);if(d>fx.L){const c=(d-fx.L)/d*.45;P.x-=dx*c;P.y-=dy*c}   // rope, slightly springy so it never jerks
+      dx=E.x-P.x;dy=E.y-P.y;d=Math.hypot(dx,dy)||1;const k=(d-fx.lr)/d;                                // bar
+      E.x-=dx*k*.75;E.y-=dy*k*.75;P.x+=dx*k*.25;P.y+=dy*k*.25;
+      for(const [X,Xp] of [[P,'Pp'],[E,'Ep']])if(X.y>G){X.y=G;X.x=fx[Xp].x+(X.x-fx[Xp].x)*.8}          // ground + friction
+    }
+  }
+  const airborne=P.y<G-6;
+  fx.L+=((innerWidth<900?110:160)-fx.L)*.03;                       // winch: rope reels in from ignition
+  fx.rot=Math.atan2(P.y-E.y,P.x-E.x)*180/Math.PI;                  // flat on the ground, vertical once hanging
+  placeFly(P,fx.rot);
+  showRope(1);drawRope(A,P,fx.L,H.y);
+}
+function drawRope(A,P,L,gy){
+  const d=Math.hypot(A.x-P.x,A.y-P.y),sag=Math.min(140,Math.sqrt(Math.max(0,L*L-d*d))*.6);
+  const mx=(A.x+P.x)/2,my=Math.min((A.y+P.y)/2+sag,2*gy-(A.y+P.y)/2);   // lies on the ground, never through it
+  rope.setAttribute('d',`M${A.x.toFixed(1)} ${A.y.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${P.x.toFixed(1)} ${P.y.toFixed(1)}`);
 }
 
 /* ---------- project overlay (each project has its own link, e.g. #p/motors) ---------- */
