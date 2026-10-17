@@ -150,8 +150,19 @@ h1 span{color:var(--muted)}
 .telem .rec{width:7px;height:7px;border-radius:50%;background:var(--flame);box-shadow:0 0 10px var(--flame);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.25}}
 .telem b{color:var(--text);font-weight:500}
-.close{margin-left:auto;background:none;border:1px solid var(--line2);color:var(--muted);font:inherit;font-size:11px;letter-spacing:.12em;padding:7px 12px;border-radius:2px;cursor:pointer;transition:all .25s}
-.close:hover{border-color:var(--flame);color:var(--flame)}
+.close{display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid var(--line2);color:var(--text);font:inherit;font-size:11px;letter-spacing:.12em;padding:8px 14px 8px 11px;border-radius:2px;cursor:pointer;transition:all .25s}
+.close .arr{font-size:14px;line-height:1;transition:transform .25s}
+.close:hover{border-color:var(--flame);color:var(--flame)}.close:hover .arr{transform:translateX(-3px)}
+.close:focus,.backfab:focus{outline:none}.close:focus-visible,.backfab:focus-visible{outline:1px solid var(--flame);outline-offset:2px}
+/* floating back button, bottom-left of the project page */
+.backfab{position:absolute;left:22px;bottom:22px;z-index:5;display:flex;align-items:center;gap:0;height:48px;padding:0 15px;border-radius:24px;cursor:pointer;
+  background:rgba(11,15,21,.88);backdrop-filter:blur(8px);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;transform:translateY(12px);transition:opacity .4s .35s,transform .4s .35s,border-color .25s,color .25s,gap .3s}
+.backfab .arr{font-size:17px;line-height:1;transition:transform .25s}
+.backfab .lbl{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .35s ease}
+.ov.on .backfab{opacity:1;transform:none}
+.backfab:hover{border-color:var(--flame);color:var(--flame);gap:10px}.backfab:hover .lbl{max-width:120px}.backfab:hover .arr{transform:translateX(-3px)}
+@media (max-width:900px){.backfab{left:16px;bottom:16px}}
 .pbody{overflow-y:auto;flex:1;padding:48px 32px 120px}
 .pbody.has-tl{padding-bottom:62vh}
 .phead .code{font-family:var(--mono);font-size:12px;color:var(--flame);letter-spacing:.14em}
@@ -480,9 +491,10 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
 <div class="ov" id="ov" aria-hidden="true">
   <div class="scrim" id="scrim"></div>
   <div class="panel" role="dialog" aria-modal="true">
-    <div class="telem"><span class="rec"></span><span id="tcode"><b>---</b></span><span id="tstat">---</span>
-      <button class="close" id="close">CLOSE ✕</button></div>
+    <div class="telem"><button class="close" id="close" aria-label="Back to all projects"><span class="arr">←</span> BACK</button>
+      <span class="rec"></span><span id="tcode"><b>---</b></span><span id="tstat">---</span></div>
     <div class="pbody" id="pbody"></div>
+    <button class="backfab" id="backfab" aria-label="Back to all projects"><span class="arr">←</span><span class="lbl">All projects</span></button>
   </div>
 </div>
 
@@ -1040,7 +1052,12 @@ document.querySelectorAll('.tile').forEach(a=>a.addEventListener('click',e=>{
 addEventListener('popstate',()=>{const m=location.hash.match(/^#p\/(\w+)/);
   if(m){fromTile=null;openProject(m[1])}else if(ov.classList.contains('on')){pushed=false;closeProject()}});
 function route(){const m=location.hash.match(/^#p\/(\w+)/);if(m){fromTile=null;openProject(m[1])}}
-$('#close').onclick=closeProject;$('#scrim').onclick=closeProject;
+$('#close').onclick=closeProject;$('#scrim').onclick=closeProject;$('#backfab').onclick=closeProject;
+// phones: swipe right across the project page to go back
+{let sx=null,sy=0;const pnl=document.querySelector('.ov .panel');
+ pnl.addEventListener('touchstart',e=>{if(lb.classList.contains('on'))return;sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+ pnl.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);sx=null;
+   if(dx>90&&dy<60)closeProject()},{passive:true});}
 addEventListener('keydown',e=>{if(e.key==='Escape')closeProject()});
 
 /* ---------- media viewer: click a photo or video to expand it ---------- */
