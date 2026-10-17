@@ -109,8 +109,8 @@ h1 span{color:var(--muted)}
 .tile.lay-top .meta{margin-top:-46px}
 /* layout B: tall photo down the side, dissolving into the text beside it */
 .tile.lay-side{flex-direction:row}
-.tile.lay-side .cover{aspect-ratio:auto;height:auto;align-self:stretch;-webkit-mask-image:linear-gradient(to right,#000 45%,rgba(0,0,0,.45) 72%,transparent 96%);mask-image:linear-gradient(to right,#000 45%,rgba(0,0,0,.45) 72%,transparent 96%)}
-.tile.lay-side .meta{margin-left:-8px;justify-content:flex-end;padding-left:0}
+.tile.lay-side .cover{aspect-ratio:auto;height:auto;align-self:stretch;-webkit-mask-image:linear-gradient(to right,#000 74%,rgba(0,0,0,.55) 88%,transparent);mask-image:linear-gradient(to right,#000 74%,rgba(0,0,0,.55) 88%,transparent)}   /* short fade at the far right edge only */
+.tile.lay-side .meta{margin-left:4px;justify-content:flex-end;padding-left:0}
 .tile .meta{position:relative;z-index:1;padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
 .tile .cover::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at var(--fx,50%) var(--fy,40%),transparent 55%,rgba(6,8,11,.35));opacity:.9}
 .tile .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
