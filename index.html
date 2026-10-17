@@ -110,6 +110,7 @@ h1 span{color:var(--muted)}
 /* layout B: tall photo down the side, dissolving into the text beside it */
 .tile.lay-side{flex-direction:row}
 .tile.lay-side .cover{aspect-ratio:auto;height:auto;align-self:stretch;-webkit-mask-image:linear-gradient(to right,#000 74%,rgba(0,0,0,.55) 88%,transparent);mask-image:linear-gradient(to right,#000 74%,rgba(0,0,0,.55) 88%,transparent)}   /* short fade at the far right edge only */
+.tile.lay-side .cover img{position:absolute;inset:0;width:100%;height:100%}   /* side photo never stretches the row */
 .tile.lay-side .meta{margin-left:4px;justify-content:flex-end;padding-left:0}
 .tile .meta{position:relative;z-index:1;padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
 .tile .cover::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at var(--fx,50%) var(--fy,40%),transparent 55%,rgba(6,8,11,.35));opacity:.9}
@@ -248,6 +249,17 @@ h1 span{color:var(--muted)}
 .dgrid{grid-template-columns:repeat(3,1fr)!important}
 .dgrid .media:not(.empty){border:1px solid var(--line)}
 @media (max-width:900px){.pdgrid{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr 1fr!important}}
+/* motors: tall video slot + thrust curve under the text */
+.step.vstep{grid-template-columns:minmax(260px,1fr) 230px}
+.media.v916{aspect-ratio:9/16!important;max-width:230px}
+.media.thrust{margin-top:18px;aspect-ratio:16/9;max-width:520px}
+.media.thrust.empty::after{font-size:10.5px}
+@media (max-width:900px){.step.vstep{grid-template-columns:1fr}.media.v916{max-width:220px}}
+/* tiles whose photo must stay whole (e.g. a labelled before/after) */
+.tile.whole.lay-side .cover{-webkit-mask-image:linear-gradient(to right,#000 93%,transparent);mask-image:linear-gradient(to right,#000 93%,transparent)}
+.tile.whole .cover::after{display:none}
+.tile.whole.vis:hover .cover.loaded img{transform:scale(1.015)}
+.tile.whole.lay-side .meta{padding:18px 18px 20px 16px}.tile.whole .row{flex-wrap:wrap;gap:8px}
 /* ---------- PHOTO VIEWER ---------- */
 .pbody .media:not(.empty),#about .media:not(.empty){cursor:zoom-in}
 .pbody .media:not(.empty)::before,#about .media:not(.empty)::before{content:"⤢";position:absolute;right:8px;bottom:8px;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;background:rgba(6,8,11,.65);border:1px solid rgba(255,255,255,.18);border-radius:3px;opacity:0;transition:opacity .25s}
@@ -389,10 +401,10 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
           <span class="open">OPEN TIMELINE →</span></div>
       </a>
 
-      <a class="tile wide reveal" href="#p/motors">
+      <a class="tile wide reveal" href="#p/motors" data-fit="whole">
         <figure class="media cover" data-label="images/cover-motors.jpg"><img src="images/cover-motors.jpg" alt=""></figure>
-        <div class="meta"><div class="row"><span class="code">MTR · 6 FIRINGS</span><span class="status s-ok">200 N+</span></div>
-          <h3>Solid Rocket Motors</h3><span class="sub">Six static-fired motors, from KNO₃ and sugar to a CNC-machined KNSB finocyl motor.</span>
+        <div class="meta"><div class="row"><span class="code">MTR · 4 FIRINGS</span><span class="status s-ok">200 N+</span></div>
+          <h3>Solid Rocket Motors</h3><span class="sub">Three failed static fires and a redesign, leading to a CNC-machined KNSB finocyl motor with ten times the thrust.</span>
           <span class="open">OPEN TIMELINE →</span></div>
       </a>
 
@@ -457,7 +469,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
         <!-- EDIT: tweak any of this so it sounds like you -->
         <p class="bio-lead">I'm Dhyey. I design, build and fly rockets, and I learn mostly by getting things wrong first.</p>
         <p>It started in a field in Surat, watching a model rocket leave the ground and disappear in seconds. Years later I watched Falcon 9 land for the first time and wanted to understand every part of how a system that big could fly and come back down. Since then I have built solid rocket motors, flight computers, aircraft and a CubeSat prototype, first in India and now in the UK.</p>
-        <p>Almost everything I have built failed before it worked. My first rocket never left the pad when its motor failed, which pushed me back to first principles and six motor iterations later to a CNC-machined KNSB motor producing over 200 N. My first RC plane never flew at 13. I rebuilt it at 16 using the lift equation and thrust-to-weight sizing from HL Physics and Maths, and it flew. The difference was not effort, it was understanding.</p>
+        <p>Almost everything I have built failed before it worked. My first rocket never left the pad when its motor failed, which led to three failed static fires, a redesign from first principles, and finally a CNC-machined KNSB motor producing over 200 N. My first RC plane never flew at 13. I rebuilt it at 16 using the lift equation and thrust-to-weight sizing from HL Physics and Maths, and it flew. The difference was not effort, it was understanding.</p>
         <p>Right now I am building a finless rocket stabilised by thrust vector control, tuning its PID controller in a Simulink model before flight, and contributing to a research project comparing five propellant formulations through static-fire testing.</p>
         <p>What I enjoy most is the full loop: turning maths and physics into hardware, testing it for real, and using the data to make the next version better. Long term, I want to build my own company in rocketry and space technology.</p>
 
@@ -543,26 +555,27 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   </div>
 </template>
 
-<template id="t-motors" data-code="MTR · MOTORS" data-status="6 static fires">
+<template id="t-motors" data-code="MTR · MOTORS" data-status="4 static fires">
   <div class="phead"><span class="code">MTR · TIMELINE</span><h2>Solid Rocket Motors</h2>
-    <p>Six motors, static-fired one at a time. Each checkpoint is one firing and what I changed going into it.</p></div>
+    <p>Three static fires, a redesign from first principles, then the final motor. Each checkpoint is one step and what I changed going into it.</p></div>
   <div class="tl motor">
     <div class="fill"></div>
-    <!-- EDIT motors 2 to 4: what you changed each time and what happened -->
-    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 01</span><h3>First static fire</h3><p>KNO₃ and sugar propellant. The baseline: getting a motor to burn at all.</p><span class="change">KNO₃ / sugar</span></div>
-      <figure class="media" data-label="images/motor-1.jpg"><img src="images/motor-1.jpg" alt=""></figure></div>
-    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Describe what you changed after motor 1 and what happened.</p><span class="change">Change: ___</span></div>
-      <figure class="media" data-label="images/motor-2.jpg"><img src="images/motor-2.jpg" alt=""></figure></div>
-    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Describe what you changed after motor 2 and what happened.</p><span class="change">Change: ___</span></div>
-      <figure class="media" data-label="images/motor-3.jpg"><img src="images/motor-3.jpg" alt=""></figure></div>
-    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 04</span><h3>Fourth firing</h3><p>Describe what you changed after motor 3 and what happened.</p><span class="change">Change: ___</span></div>
-      <figure class="media" data-label="images/motor-4.jpg"><img src="images/motor-4.jpg" alt=""></figure></div>
-    <div class="step"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 05</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
+    <!-- EDIT motors 2 and 3: what you changed each time and what happened.
+         Each of the first three has a video slot (images/motor-1.mp4 ...) and a thrust curve slot (images/thrust-1.jpg ...). -->
+    <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 01</span><h3>First static fire</h3><p>KNO₃ and sugar propellant. The baseline: getting a motor to burn at all.</p><span class="change">KNO₃ / sugar</span>
+        <figure class="media thrust" data-label="images/thrust-1.jpg  ·  thrust curve"><img src="images/thrust-1.jpg" alt="Motor 1 thrust curve"></figure></div>
+      <figure class="media v916" data-label="images/motor-1.mp4  ·  static fire video"><img src="images/motor-1.jpg" alt=""></figure></div>
+    <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Describe what you changed after motor 1 and what happened.</p><span class="change">Change: ___</span>
+        <figure class="media thrust" data-label="images/thrust-2.jpg  ·  thrust curve"><img src="images/thrust-2.jpg" alt="Motor 2 thrust curve"></figure></div>
+      <figure class="media v916" data-label="images/motor-2.mp4  ·  static fire video"><img src="images/motor-2.jpg" alt=""></figure></div>
+    <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
+      <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Describe what you changed after motor 2 and what happened.</p><span class="change">Change: ___</span>
+        <figure class="media thrust" data-label="images/thrust-3.jpg  ·  thrust curve"><img src="images/thrust-3.jpg" alt="Motor 3 thrust curve"></figure></div>
+      <figure class="media v916" data-label="images/motor-3.mp4  ·  static fire video"><img src="images/motor-3.jpg" alt=""></figure></div>
+    <div class="step"><span class="dot"></span>
+      <div><span class="n">REDESIGN</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
       <figure class="media" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div>
     <div class="step final"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. Over 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, swing performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
@@ -707,6 +720,8 @@ function fitMedia(fig,el,w,h){
   if(fig.closest('.avatar')||fig.closest('.pcard'))return;
   const isVid=el.tagName==='VIDEO',portrait=h>w*1.05;
   if(fig.classList.contains('cover')){if(!isVid)coverReady(fig,el,w,h);return}
+  if(fig.classList.contains('v916')){             // tall video slot: keep 9:16; letterbox anything that isn't tall
+    if(Math.abs(w/h-9/16)>.08)fig.classList.add('fit');return}
   if(fig.closest('.dgrid')){                    // CAD & prints grid: photo fills the whole box, framed on its most detailed part
     if(!isVid){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
     return}
@@ -723,7 +738,12 @@ function markVideo(fig,v){
   fig.setAttribute('role','button');fig.setAttribute('aria-label','Play video');
 }
 function tryVideo(fig,img){
-  const orig=img.getAttribute('src')||'',src=orig.replace(/\.(jpe?g|png|webp)$/i,'.mp4');
+  // a .jpg slot also accepts .png (and the other way round) before falling back to .mp4
+  const cur=img.getAttribute('src')||'';
+  if(!img.dataset.orig){img.dataset.orig=cur;
+    const alt=/\.jpe?g$/i.test(cur)?cur.replace(/\.jpe?g$/i,'.png'):/\.png$/i.test(cur)?cur.replace(/\.png$/i,'.jpg'):'';
+    if(alt){img.addEventListener('error',()=>tryVideo(fig,img),{once:true});img.addEventListener('load',()=>fitMedia(fig,img,img.naturalWidth,img.naturalHeight),{once:true});img.src=alt;return}}
+  const orig=img.dataset.orig,src=orig.replace(/\.(jpe?g|png|webp)$/i,'.mp4');
   img.remove();
   if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');if(fig.classList.contains('cover'))layoutTile(fig.closest('.tile'));return}   // homepage tiles are photo-only
   const v=document.createElement('video');
@@ -757,9 +777,11 @@ function coverReady(fig,img,w,h){
 }
 // Chooses the layout that shows the most of the photo: across the top for wide/square shots,
 // down the side for tall ones. Never stretches; only trims when it has to, around the focal point.
+const img0=f=>f.querySelector('img')||{style:{}};
 function layoutTile(tile){
   if(!tile)return;
-  const fig=tile.querySelector('.cover'),meta=tile.querySelector('.meta'),r=+fig.dataset.r||0;
+  const fig=tile.querySelector('.cover'),meta=tile.querySelector('.meta'),r=+fig.dataset.r||0,whole=tile.dataset.fit==='whole';
+  tile.classList.toggle('whole',whole);
   tile.classList.remove('lay-top','lay-side');fig.style.height='';fig.style.width='';
   const W=tile.clientWidth;
   if(innerWidth<900){                                   // phones: one column, so the tile can simply be as tall as the photo needs
@@ -771,6 +793,11 @@ function layoutTile(tile){
   if(!r){tile.classList.add('lay-top');fig.style.height=Math.round(Math.min(room,H*.58))+'px';return}   // empty slot: don't stretch the row
   const fullH=W/r;
   const topShow=fullH<=room?1:room/fullH;               // share of the photo visible across the top
+  if(whole){                                            // never trim: full photo across the top or down the side
+    if(fullH<=room*1.02){tile.classList.add('lay-top');fig.style.height=Math.round(fullH)+'px'}
+    else{tile.classList.add('lay-side');fig.style.width=Math.round(Math.min(H*r,W*.68))+'px';
+      if(H*r>W*.68)img0(fig).style.objectFit='contain'}
+    return}
   const sideW=Math.min(H*r,W*.56),sideShow=sideW/(H*r);  // share visible down the side
   if(topShow>=.8||topShow>=sideShow){tile.classList.add('lay-top');fig.style.height=Math.round(Math.min(room,fullH*1.25))+'px'}   // wide shots may trim up to 1/5 of the width to fill
   else{tile.classList.add('lay-side');fig.style.width=Math.round(sideW)+'px'}
@@ -1028,7 +1055,7 @@ function openProject(id){
   void panel.offsetWidth;panel.classList.add('anim');
   ov.classList.add('on');ov.setAttribute('aria-hidden','false');document.body.classList.add('lock');
   requestAnimationFrame(()=>panel.style.clipPath='inset(0 0 0 0 round 0px)');
-  setTimeout(()=>$('#close').focus({preventScroll:true}),650);
+  setTimeout(()=>$('#close').focus({preventScroll:true,focusVisible:false}),650);
 }
 let pushed=false;
 function rectInset(el){const r=el.getBoundingClientRect(),W=innerWidth,H=innerHeight;

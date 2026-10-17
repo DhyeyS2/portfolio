@@ -19,6 +19,11 @@ it shows the `.mp4` as a still frame with a play button, and visitors click it t
 Videos only play inside projects. The homepage tiles (`cover-...`) are photo-only.
 Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need converting to `.mp4` first.
 
+## Motors page
+The first three static fires each have a tall video slot (`motor-1.mp4`, `motor-2.mp4`, `motor-3.mp4`)
+and a thrust curve slot under the text (`thrust-1.jpg`, `thrust-2.jpg`, `thrust-3.jpg`). Any photo slot accepts
+`.jpg` or `.png`.
+
 ## How the site is laid out
 - The top screen has the launch-pad rocket. It lifts off as visitors scroll.
 - Below it is the project grid. Each tile opens its own project page.
@@ -39,7 +44,7 @@ There is also `profile.jpg` (a square headshot for the profile at the top) and `
 ## Editing text
 Open `index.html` in any text editor (VS Code is free). Search for `EDIT` to find every
 spot that needs your real info:
-- Motors 2, 3 and 4: what you changed each time
+- Motors 2 and 3: what you changed each time
 - First rocket and RC plane attempt one: what went wrong
 - TEDx talk: title, event, summary, YouTube link
 - Product Designs: the three product names and descriptions
