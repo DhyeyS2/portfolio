@@ -250,11 +250,11 @@ h1 span{color:var(--muted)}
 .dgrid .media:not(.empty){border:1px solid var(--line)}
 @media (max-width:900px){.pdgrid{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr 1fr!important}}
 /* motors: tall video slot + thrust curve under the text */
-.step.vstep{grid-template-columns:minmax(260px,1fr) 230px}
-.media.v916{aspect-ratio:9/16!important;max-width:230px}
+.step.vstep{grid-template-columns:minmax(0,520px) 300px;justify-content:start;gap:44px}
+.media.v916{aspect-ratio:9/16!important;width:100%;max-width:300px}
 .media.thrust{margin-top:18px;aspect-ratio:16/9;max-width:520px}
 .media.thrust.empty::after{font-size:10.5px}
-@media (max-width:900px){.step.vstep{grid-template-columns:1fr}.media.v916{max-width:220px}}
+@media (max-width:900px){.step.vstep{grid-template-columns:1fr;gap:20px}.media.v916{max-width:260px}}
 /* tiles whose photo must stay whole (e.g. a labelled before/after) */
 .tile.whole.lay-side .cover{-webkit-mask-image:linear-gradient(to right,#000 93%,transparent);mask-image:linear-gradient(to right,#000 93%,transparent)}
 .tile.whole .cover::after{display:none}
@@ -782,12 +782,14 @@ function layoutTile(tile){
   if(!tile)return;
   const fig=tile.querySelector('.cover'),meta=tile.querySelector('.meta'),r=+fig.dataset.r||0,whole=tile.dataset.fit==='whole';
   tile.classList.toggle('whole',whole);
+  const H0=tile.getBoundingClientRect().height;          // measure before resetting, or the reset itself changes the height
   tile.classList.remove('lay-top','lay-side');fig.style.height='';fig.style.width='';
   const W=tile.clientWidth;
   if(innerWidth<900){                                   // phones: one column, so the tile can simply be as tall as the photo needs
     tile.classList.add('lay-top');
     fig.style.height=(r?Math.max(190,Math.min(460,W/r)):Math.round(W*.56))+'px';return}
-  const H=Math.max(tile.clientHeight,440);
+  const row=[...tile.parentNode.children].filter(t=>t!==tile&&Math.abs(t.offsetTop-tile.offsetTop)<2).map(t=>t.getBoundingClientRect().height);
+  const H=Math.max(440,Math.min(H0||440,...(row.length?row:[H0||440])));   // the row's settled height
   meta.style.flex='none';const mh=meta.offsetHeight;meta.style.flex='';
   const room=H-mh+46;                                   // height the photo can use above the text
   if(!r){tile.classList.add('lay-top');fig.style.height=Math.round(Math.min(room,H*.58))+'px';return}   // empty slot: don't stretch the row
@@ -803,6 +805,10 @@ function layoutTile(tile){
   else{tile.classList.add('lay-side');fig.style.width=Math.round(sideW)+'px'}
 }
 let tileTimer;addEventListener('resize',()=>{clearTimeout(tileTimer);tileTimer=setTimeout(()=>document.querySelectorAll('.grid .tile').forEach(layoutTile),120)});
+if(window.ResizeObserver){const seen=new WeakMap();
+  const ro=new ResizeObserver(es=>es.forEach(e=>{const t=e.target,h=Math.round(e.contentRect.height),w=Math.round(e.contentRect.width),k=w+'x'+h;
+    if(seen.get(t)!==k){seen.set(t,k);layoutTile(t)}}));
+  document.querySelectorAll('.grid .tile').forEach(t=>ro.observe(t));}
 if(document.fonts)document.fonts.ready.then(()=>document.querySelectorAll('.grid .tile').forEach(layoutTile));
 function wireImages(root){root.querySelectorAll('.media img:not(.bgblur)').forEach(img=>{
   const fig=img.parentNode;
