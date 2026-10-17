@@ -235,6 +235,7 @@ h1 span{color:var(--muted)}
 .pd h4{font-size:19px;font-weight:500;margin:4px 0 8px;letter-spacing:-.01em}
 .pd p{color:var(--muted);font-size:14.5px;line-height:1.6}
 .dgrid{grid-template-columns:repeat(3,1fr)!important}
+.dgrid .media:not(.empty){border:1px solid var(--line)}
 @media (max-width:900px){.pdgrid{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr 1fr!important}}
 /* ---------- PHOTO VIEWER ---------- */
 .pbody .media:not(.empty),#about .media:not(.empty){cursor:zoom-in}
@@ -694,6 +695,9 @@ function fitMedia(fig,el,w,h){
   if(fig.closest('.avatar')||fig.closest('.pcard'))return;
   const isVid=el.tagName==='VIDEO',portrait=h>w*1.05;
   if(fig.classList.contains('cover')){if(!isVid)coverReady(fig,el,w,h);return}
+  if(fig.closest('.dgrid')){                    // CAD & prints grid: photo fills the whole box, framed on its most detailed part
+    if(!isVid){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
+    return}
   if(fig.closest('.gallery')||fig.closest('.pd')||portrait){
     if(!isVid)addBlur(fig,el.currentSrc||el.src);
     fig.classList.add('fit');
