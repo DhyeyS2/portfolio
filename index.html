@@ -96,13 +96,25 @@ h1 span{color:var(--muted)}
 .tile{grid-column:span 4;position:relative;display:flex;flex-direction:column;border:1px solid var(--line);background:rgba(11,15,21,.78);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
 .tile.wide{grid-column:span 6}
 .tile:hover{border-color:rgba(255,106,43,.55);transform:translateY(-4px)}
-.tile .cover{aspect-ratio:16/10;border:0;border-bottom:1px solid var(--line);border-radius:0}
-.tile.wide .cover{aspect-ratio:16/9}
-.tile .cover img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-.tile:hover .cover img{transform:scale(1.05)}
-.tile .meta{padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.grid .tile{min-height:440px}
+.tile .cover{position:relative;flex:none;width:100%;aspect-ratio:16/10;border:0;border-radius:0;background:transparent}
+.tile .cover.empty{-webkit-mask-image:none;mask-image:none}
+/* photo eases in as the tile appears, slow zoom on hover */
+.tile .cover img{opacity:0;transform:scale(1.08);filter:saturate(.92) brightness(.9);transform-origin:var(--fx,50%) var(--fy,50%);
+  transition:opacity .9s ease,transform 1.4s cubic-bezier(.2,.7,.2,1),filter .6s ease}
+.tile.vis .cover.loaded img{opacity:1;transform:scale(1)}
+.tile.vis:hover .cover.loaded img{transform:scale(1.06);filter:saturate(1.05) brightness(1)}
+/* layout A: photo across the top, dissolving into the text below */
+.tile.lay-top .cover{aspect-ratio:auto;-webkit-mask-image:linear-gradient(to bottom,#000 55%,rgba(0,0,0,.55) 78%,transparent);mask-image:linear-gradient(to bottom,#000 55%,rgba(0,0,0,.55) 78%,transparent)}
+.tile.lay-top .meta{margin-top:-46px}
+/* layout B: tall photo down the side, dissolving into the text beside it */
+.tile.lay-side{flex-direction:row}
+.tile.lay-side .cover{aspect-ratio:auto;height:auto;align-self:stretch;-webkit-mask-image:linear-gradient(to right,#000 45%,rgba(0,0,0,.45) 72%,transparent 96%);mask-image:linear-gradient(to right,#000 45%,rgba(0,0,0,.45) 72%,transparent 96%)}
+.tile.lay-side .meta{margin-left:-8px;justify-content:flex-end;padding-left:0}
+.tile .meta{position:relative;z-index:1;padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.tile .cover::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at var(--fx,50%) var(--fy,40%),transparent 55%,rgba(6,8,11,.35));opacity:.9}
 .tile .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.tile .code{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em}
+.tile .code{white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em}
 .tile h3{font-size:21px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
 .tile .sub{font-size:14px;color:var(--muted)}
 .tile .open{margin-top:auto;padding-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);transition:color .3s}
@@ -259,7 +271,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
 @media (max-width:900px){
   .wrap{padding:0 18px}
   .hud{padding:14px 18px}.hud nav{display:none}
-  .tile,.tile.wide{grid-column:span 12}
+  .tile,.tile.wide{grid-column:span 12}.grid .tile{min-height:0}
   .pad{width:84px}.tower{display:none}.hero-text{padding-right:80px}   /* rocket gets its own lane on phones */
   .hrocket,.hrocket svg{width:46px}.hrocket{margin-left:-23px;bottom:-40px}
 
@@ -634,7 +646,7 @@ function addBlur(fig,src){if(fig.querySelector('.bgblur'))return;const b=documen
 function fitMedia(fig,el,w,h){
   if(fig.closest('.avatar')||fig.closest('.pcard'))return;
   const isVid=el.tagName==='VIDEO',portrait=h>w*1.05;
-  if(fig.classList.contains('cover')){if(!isVid)addBlur(fig,el.currentSrc||el.src);fig.classList.add('fit');return}
+  if(fig.classList.contains('cover')){if(!isVid)coverReady(fig,el,w,h);return}
   if(fig.closest('.gallery')||portrait){
     if(!isVid)addBlur(fig,el.currentSrc||el.src);
     fig.classList.add('fit');
@@ -650,7 +662,7 @@ function markVideo(fig,v){
 function tryVideo(fig,img){
   const orig=img.getAttribute('src')||'',src=orig.replace(/\.(jpe?g|png|webp)$/i,'.mp4');
   img.remove();
-  if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');return}   // homepage tiles are photo-only
+  if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');if(fig.classList.contains('cover'))layoutTile(fig.closest('.tile'));return}   // homepage tiles are photo-only
   const v=document.createElement('video');
   // videos never autoplay: load just enough to show the first frame, play on click
   v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
@@ -658,6 +670,50 @@ function tryVideo(fig,img){
   v.addEventListener('error',()=>{v.remove();fig.classList.add('empty')},{once:true});
   v.src=src+'#t=0.1';fig.appendChild(v);
 }
+/* ---------- project tiles: fit each cover photo to its real shape ---------- */
+// Finds the busiest part of a photo (edges and contrast) so any trimming keeps the subject in frame.
+function focalPoint(img){
+  try{
+    const N=40,c=document.createElement('canvas');c.width=N;c.height=N;const x=c.getContext('2d',{willReadFrequently:true});
+    x.drawImage(img,0,0,N,N);const d=x.getImageData(0,0,N,N).data,L=new Float32Array(N*N);
+    for(let i=0;i<N*N;i++)L[i]=d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11;
+    let sx=0,sy=0,sw=0;
+    for(let y=1;y<N-1;y++)for(let x2=1;x2<N-1;x2++){const i=y*N+x2,g=Math.abs(L[i+1]-L[i-1])+Math.abs(L[i+N]-L[i-N]);
+      const w=g*g;sx+=w*x2;sy+=w*y;sw+=w}
+    if(!sw)return{x:.5,y:.45};
+    const fx=sx/sw/(N-1),fy=sy/sw/(N-1);
+    return{x:.5+(fx-.5)*.85,y:.45+(fy-.45)*.85};          // lean gently towards the detail, never to the very edge
+  }catch(e){return{x:.5,y:.45}}
+}
+function coverReady(fig,img,w,h){
+  fig.dataset.r=(w/h).toFixed(4);
+  const f=focalPoint(img);fig.style.setProperty('--fx',(f.x*100).toFixed(1)+'%');fig.style.setProperty('--fy',(f.y*100).toFixed(1)+'%');
+  img.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`;
+  layoutTile(fig.closest('.tile'));
+  requestAnimationFrame(()=>fig.classList.add('loaded'));
+}
+// Chooses the layout that shows the most of the photo: across the top for wide/square shots,
+// down the side for tall ones. Never stretches; only trims when it has to, around the focal point.
+function layoutTile(tile){
+  if(!tile)return;
+  const fig=tile.querySelector('.cover'),meta=tile.querySelector('.meta'),r=+fig.dataset.r||0;
+  tile.classList.remove('lay-top','lay-side');fig.style.height='';fig.style.width='';
+  const W=tile.clientWidth;
+  if(innerWidth<900){                                   // phones: one column, so the tile can simply be as tall as the photo needs
+    tile.classList.add('lay-top');
+    fig.style.height=(r?Math.max(190,Math.min(460,W/r)):Math.round(W*.56))+'px';return}
+  const H=Math.max(tile.clientHeight,440);
+  meta.style.flex='none';const mh=meta.offsetHeight;meta.style.flex='';
+  const room=H-mh+46;                                   // height the photo can use above the text
+  if(!r){tile.classList.add('lay-top');fig.style.height=Math.round(Math.min(room,H*.58))+'px';return}   // empty slot: don't stretch the row
+  const fullH=W/r;
+  const topShow=fullH<=room?1:room/fullH;               // share of the photo visible across the top
+  const sideW=Math.min(H*r,W*.56),sideShow=sideW/(H*r);  // share visible down the side
+  if(topShow>=.8||topShow>=sideShow){tile.classList.add('lay-top');fig.style.height=Math.round(Math.min(room,fullH*1.25))+'px'}   // wide shots may trim up to 1/5 of the width to fill
+  else{tile.classList.add('lay-side');fig.style.width=Math.round(sideW)+'px'}
+}
+let tileTimer;addEventListener('resize',()=>{clearTimeout(tileTimer);tileTimer=setTimeout(()=>document.querySelectorAll('.grid .tile').forEach(layoutTile),120)});
+if(document.fonts)document.fonts.ready.then(()=>document.querySelectorAll('.grid .tile').forEach(layoutTile));
 function wireImages(root){root.querySelectorAll('.media img:not(.bgblur)').forEach(img=>{
   const fig=img.parentNode;
   const ok=()=>fitMedia(fig,img,img.naturalWidth,img.naturalHeight);

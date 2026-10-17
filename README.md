@@ -28,7 +28,10 @@ Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need con
 
 ## Tile cover photos
 Each tile on the grid uses a cover image: `cover-rockets.jpg`, `cover-motors.jpg`, `cover-rc.jpg`,
-`cover-cubesat.jpg`, `cover-vanguard.jpg`, `cover-cad.jpg`, `cover-tedx.jpg`. Landscape photos work best.
+`cover-cubesat.jpg`, `cover-vanguard.jpg`, `cover-cad.jpg`, `cover-tedx.jpg`. Any shape works: the tile reads
+the photo's size and lays itself out to show as much of it as possible (wide and square photos across the
+top, tall photos down the side), fading the photo into the text. Nothing is stretched; if a little has to be
+trimmed, it keeps the most detailed part of the photo in frame. Use photos at least 1200 px wide so they stay sharp.
 There is also `profile.jpg` (a square headshot for the profile at the top) and `me.jpg` for the About section.
 
 ## Editing text
