@@ -24,6 +24,8 @@ Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need con
 - Below it is the project grid. Each tile opens its own project page.
 - Each project page has its own link you can send directly, e.g. `yoursite.com/#p/motors`
   (`#p/rockets`, `#p/motors`, `#p/rc`, `#p/cubesat`, `#p/vanguard`, `#p/cad`, `#p/tedx`).
+- The Design page (`#p/cad`) has three product cards (`product-1.jpg` to `product-3.jpg`, each with a name and
+  description to fill in) and a grid of nine CAD / practice / 3D print photos (`design-1.jpg` to `design-9.jpg`).
 - Project content lives near the bottom of `index.html` inside `<template id="t-...">` blocks.
 
 ## Tile cover photos
@@ -40,7 +42,7 @@ spot that needs your real info:
 - Motors 2, 3 and 4: what you changed each time
 - First rocket and RC plane attempt one: what went wrong
 - TEDx talk: title, event, summary, YouTube link
-- CAD captions
+- Product Designs: the three product names and descriptions
 - About section: tweak the wording so it sounds like you
 - Contact section: your real email, LinkedIn, GitHub and CV link
 

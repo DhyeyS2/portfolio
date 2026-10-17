@@ -223,6 +223,19 @@ h1 span{color:var(--muted)}
 @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(255,106,43,.5),0 8px 30px rgba(0,0,0,.5)}70%,100%{box-shadow:0 0 0 18px rgba(255,106,43,0),0 8px 30px rgba(0,0,0,.5)}}
 .vbadge{position:absolute;left:10px;top:10px;z-index:3;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#fff;background:rgba(6,8,11,.75);border:1px solid rgba(255,255,255,.18);border-radius:2px;padding:4px 7px;pointer-events:none}
 .gallery .vplay{width:48px;height:48px;margin:-24px 0 0 -24px}.gallery .vplay::after{left:19px;top:14px;border-width:10px 0 10px 15px}
+/* design page: product cards + CAD/print grid */
+.dsec{display:flex;align-items:baseline;gap:14px;margin:44px 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.dsec .code{font-family:var(--mono);font-size:12px;color:var(--flame);letter-spacing:.14em}
+.dsec h3{font-size:24px;font-weight:500;letter-spacing:-.01em}
+.pdgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pd{border:1px solid var(--line);border-radius:4px;overflow:hidden;background:rgba(11,15,21,.6);display:flex;flex-direction:column}
+.pd .media{aspect-ratio:4/3;border:0;border-bottom:1px solid var(--line);border-radius:0}
+.pd-body{padding:16px 18px 20px}
+.pd-n{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.pd h4{font-size:19px;font-weight:500;margin:4px 0 8px;letter-spacing:-.01em}
+.pd p{color:var(--muted);font-size:14.5px;line-height:1.6}
+.dgrid{grid-template-columns:repeat(3,1fr)!important}
+@media (max-width:900px){.pdgrid{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr 1fr!important}}
 /* ---------- PHOTO VIEWER ---------- */
 .pbody .media:not(.empty),#about .media:not(.empty){cursor:zoom-in}
 .pbody .media:not(.empty)::before,#about .media:not(.empty)::before{content:"⤢";position:absolute;right:8px;bottom:8px;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;background:rgba(6,8,11,.65);border:1px solid rgba(255,255,255,.18);border-radius:3px;opacity:0;transition:opacity .25s}
@@ -394,8 +407,8 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
 
       <a class="tile wide reveal" href="#p/cad">
         <figure class="media cover" data-label="images/cover-cad.jpg"><img src="images/cover-cad.jpg" alt=""></figure>
-        <div class="meta"><div class="row"><span class="code">CAD · PRINTS</span><span class="status s-done">Gallery</span></div>
-          <h3>CAD &amp; 3D Prints</h3><span class="sub">Nozzles, gimbal mounts, PCBs and printed parts. Onshape, KiCad, Eagle.</span>
+        <div class="meta"><div class="row"><span class="code">DESIGN · GALLERY</span><span class="status s-done">3 products</span></div>
+          <h3>Product Designs, CAD &amp; 3D Prints</h3><span class="sub">Three fully documented products, plus CAD designs, practice parts and 3D prints.</span>
           <span class="open">OPEN GALLERY →</span></div>
       </a>
 
@@ -602,17 +615,51 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   </div>
 </template>
 
-<template id="t-cad" data-code="CAD · GALLERY" data-status="Onshape · KiCad · Eagle">
-  <div class="phead"><span class="code">CAD · PRINTS</span><h2>CAD &amp; 3D Prints</h2>
-    <p>The design side of the projects. Rename the captions and add or remove tiles as you like.</p></div>
-  <div class="gallery" style="grid-template-columns:repeat(3,1fr);margin-top:32px">
-    <!-- EDIT captions -->
-    <figure class="media" data-label="images/cad-1.png  ·  Nozzle, Onshape"><img src="images/cad-1.png" alt=""></figure>
-    <figure class="media" data-label="images/cad-2.png  ·  TVC gimbal mount"><img src="images/cad-2.png" alt=""></figure>
-    <figure class="media" data-label="images/cad-3.png  ·  Flight computer PCB"><img src="images/cad-3.png" alt=""></figure>
-    <figure class="media" data-label="images/print-1.jpg  ·  3D print"><img src="images/print-1.jpg" alt=""></figure>
-    <figure class="media" data-label="images/print-2.jpg  ·  3D print"><img src="images/print-2.jpg" alt=""></figure>
-    <figure class="media" data-label="images/print-3.jpg  ·  3D print"><img src="images/print-3.jpg" alt=""></figure>
+<template id="t-cad" data-code="DESIGN · GALLERY" data-status="Product · CAD · 3D print">
+  <div class="phead"><span class="code">DESIGN · GALLERY</span><h2>Product Designs, CAD &amp; 3D Prints</h2>
+    <p>Products designed and built from brief to finished prototype, plus CAD work and printed parts.</p></div>
+
+  <div class="dsec"><span class="code">01</span><h3>Product Designs</h3></div>
+  <!-- EDIT: product names and descriptions. Photos: images/product-1.jpg, product-2.jpg, product-3.jpg -->
+  <div class="pdgrid">
+    <article class="pd">
+      <figure class="media" data-label="images/product-1.jpg"><img src="images/product-1.jpg" alt=""></figure>
+      <div class="pd-body">
+        <span class="pd-n">PRODUCT 01</span>
+        <h4>Product name</h4>
+        <p>What it is, who it's for and the problem it solves. How you designed, prototyped and tested it, and what you'd change next time.</p>
+      </div>
+    </article>
+    <article class="pd">
+      <figure class="media" data-label="images/product-2.jpg"><img src="images/product-2.jpg" alt=""></figure>
+      <div class="pd-body">
+        <span class="pd-n">PRODUCT 02</span>
+        <h4>Product name</h4>
+        <p>What it is, who it's for and the problem it solves. How you designed, prototyped and tested it, and what you'd change next time.</p>
+      </div>
+    </article>
+    <article class="pd">
+      <figure class="media" data-label="images/product-3.jpg"><img src="images/product-3.jpg" alt=""></figure>
+      <div class="pd-body">
+        <span class="pd-n">PRODUCT 03</span>
+        <h4>Product name</h4>
+        <p>What it is, who it's for and the problem it solves. How you designed, prototyped and tested it, and what you'd change next time.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="dsec"><span class="code">02</span><h3>CAD Designs &amp; 3D Prints</h3></div>
+  <!-- Photos: images/design-1.jpg to design-9.jpg (CAD renders, practice products, 3D prints). Delete any slot you don't use. -->
+  <div class="gallery dgrid">
+    <figure class="media" data-label="images/design-1.jpg"><img src="images/design-1.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-2.jpg"><img src="images/design-2.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-3.jpg"><img src="images/design-3.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-4.jpg"><img src="images/design-4.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-5.jpg"><img src="images/design-5.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-6.jpg"><img src="images/design-6.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-7.jpg"><img src="images/design-7.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-8.jpg"><img src="images/design-8.jpg" alt=""></figure>
+    <figure class="media" data-label="images/design-9.jpg"><img src="images/design-9.jpg" alt=""></figure>
   </div>
 </template>
 
@@ -647,10 +694,10 @@ function fitMedia(fig,el,w,h){
   if(fig.closest('.avatar')||fig.closest('.pcard'))return;
   const isVid=el.tagName==='VIDEO',portrait=h>w*1.05;
   if(fig.classList.contains('cover')){if(!isVid)coverReady(fig,el,w,h);return}
-  if(fig.closest('.gallery')||portrait){
+  if(fig.closest('.gallery')||fig.closest('.pd')||portrait){
     if(!isVid)addBlur(fig,el.currentSrc||el.src);
     fig.classList.add('fit');
-    if(portrait&&!fig.closest('.gallery'))fig.style.aspectRatio='5/4';
+    if(portrait&&!fig.closest('.gallery')&&!fig.closest('.pd'))fig.style.aspectRatio='5/4';
   }else fig.style.aspectRatio=w+'/'+h;
 }
 function markVideo(fig,v){
@@ -1017,7 +1064,7 @@ function lbShow(i,anim){
   else{lbCur.style.opacity=0;setTimeout(()=>{setCur(src);lbCur.style.transition='none';place(fitRect(src));void lbCur.offsetWidth;lbCur.style.transition=''},160)}
 }
 function lbOpen(el){
-  const group=el.closest('.step')||el.closest('.ptext')||el.closest('.gallery')||el.closest('.about')||el.parentNode;
+  const group=el.closest('.step')||el.closest('.ptext')||el.closest('.pdgrid')||el.closest('.gallery')||el.closest('.about')||el.parentNode;
   lbList=[...group.querySelectorAll('.media img:not(.bgblur), .media video:not(.bgblur)')].filter(x=>dims(x)[0]);
   lb.classList.toggle('single',lbList.length<2);
   lb.classList.add('on');lb.setAttribute('aria-hidden','false');lbShow(lbList.indexOf(el),true);
