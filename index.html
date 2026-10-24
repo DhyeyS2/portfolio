@@ -758,8 +758,8 @@ function fitMedia(fig,el,w,h){
     fig.dataset.r=(w/h).toFixed(4);
     if(!isVid&&(w/h<.42||w/h>2.6)){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
     mosaicCheck(fig.closest('.mosaic'));return}
-  if(fig.classList.contains('v916')){             // tall static-fire slot: takes the shot's own shape, trimming only very thin ones
-    const r=Math.min(.75,Math.max(.42,w/h));fig.style.setProperty('--r',r.toFixed(4));
+  if(fig.classList.contains('v916')){             // tall static-fire slot: takes the shot's own shape (only wide ones are trimmed)
+    const r=Math.min(.75,w/h);fig.style.setProperty('--r',r.toFixed(4));   // thin shots show whole, however narrow
     if(!isVid&&Math.abs(r-w/h)>.01){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
     return}
   if(fig.closest('.dgrid')){                    // CAD & prints grid: photo fills the whole box, framed on its most detailed part
