@@ -329,6 +329,33 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
 }
 @media (min-width:901px) and (max-width:1100px){.tile{grid-column:span 6}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+
+/* ---------- project photos: seamless mosaics ----------
+   Each .mosaic packs its photos and videos into rows that fill the width exactly. Every item keeps its
+   own shape (no letterbox bars, no stretching) and all items in a row share one height. */
+.mosaic{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;min-width:0;width:100%}
+.mosaic.none{display:none}
+.mosaic>.media{flex:none;aspect-ratio:auto;width:100%;height:240px;border:0;border-radius:6px;background:var(--bg3);
+  box-shadow:0 22px 44px -26px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.045);
+  opacity:0;transform:translateY(16px) scale(.985);transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.mosaic.ready>.media{opacity:1;transform:none}
+.mosaic>.media img:not(.bgblur),.mosaic>.media video{object-fit:cover}
+.mosaic>.media.empty{box-shadow:none;border:1px dashed var(--line2)}
+body:not(.slots) .mosaic>.media.empty{display:none}
+.mosaic .vplay{width:52px;height:52px;margin:-26px 0 0 -26px}
+.mosaic .vplay::after{left:21px;top:15px;border-width:11px 0 11px 16px}
+/* line drawings and graphs on white paper: shown in dark mode so they sit in the page */
+.media.ink{background:#0d1117}
+.media.ink img:not(.bgblur){filter:invert(.93) hue-rotate(180deg) saturate(1.5) contrast(1.05)}
+/* photos shot on white: toned down so they don't glare against the dark page */
+.media.paper img:not(.bgblur){filter:brightness(.84) contrast(1.05)}
+.media.thrust{border:0;border-radius:6px;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+.pbody .media.ink:not(.empty):hover img{filter:invert(.95) hue-rotate(180deg) saturate(1.7) contrast(1.08)}
+/* tall static-fire shots: take the photo's own shape (within limits) instead of a fixed 9:16 box */
+.media.v916{--h:520px;aspect-ratio:var(--r,.5625)!important;height:var(--h);width:calc(var(--h) * var(--r,.5625));max-width:none;border:0;border-radius:6px;box-shadow:0 22px 44px -26px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.045)}
+.media.v916:not(.fit) img,.media.v916:not(.fit) video{object-fit:cover}
+.step.vstep{grid-template-columns:minmax(0,520px) auto}
+@media (max-width:900px){.media.v916{--h:440px}.mosaic{gap:8px}.step.vstep{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -529,11 +556,11 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
         <!-- EDIT: date, location, what exactly failed -->
         <p class="lesson" style="margin-top:12px">That failure is why I went back to first principles instead of guessing.</p></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
-      <div class="gallery">
+      <div class="mosaic">
         <figure class="media" data-label="images/rocket-01.jpg"><img src="images/rocket-01.jpg" alt=""></figure>
-        <figure class="media" data-label="images/rocket-01-2.jpg"><img src="images/rocket-01-2.jpg" alt=""></figure>
-        <figure class="media" data-label="images/rocket-01-3.jpg"><img src="images/rocket-01-3.jpg" alt=""></figure>
-        <figure class="media" data-label="images/rocket-01-4.jpg"><img src="images/rocket-01-4.jpg" alt=""></figure>
+        <figure class="media paper" data-label="images/rocket-01-2.jpg"><img src="images/rocket-01-2.jpg" alt=""></figure>
+        <figure class="media paper" data-label="images/rocket-01-3.jpg"><img src="images/rocket-01-3.jpg" alt=""></figure>
+        <figure class="media ink" data-label="images/rocket-01-4.jpg"><img src="images/rocket-01-4.jpg" alt=""></figure>
       </div>
     </div>
     <div class="step"><span class="dot"></span>
@@ -541,7 +568,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
         <p>An 800 g rocket carrying a flight computer I designed from scratch: a 2-layer KiCad PCB with an IMU, barometric altimeter and live telemetry. It reached 520 m and logged the whole flight, giving me real data to check my trajectory model against.</p>
         <span class="change">800 g · 520 m · custom avionics</span></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
-      <div class="gallery">
+      <div class="mosaic">
         <figure class="media" data-label="images/rocket-02-launch.jpg"><img src="images/rocket-02-launch.jpg" alt=""></figure>
         <figure class="media" data-label="images/flight-computer.JPG"><img src="images/flight-computer.JPG" alt=""></figure>
         <figure class="media" data-label="images/rocket-02-3.jpg"><img src="images/rocket-02-3.jpg" alt=""></figure>
@@ -552,7 +579,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
       <div><span class="n">RKT-03 <span class="status s-wip">In development</span></span><h3>TVC rocket</h3>
         <p>No fins. It stays upright by steering its own thrust through a gimballed motor, the same idea that lets Falcon 9 land. I used rotational dynamics to model how gimbal angle affects attitude, then built a Simulink model of the rocket and controller to tune the PID loop before flight.</p>
         <span class="change">Gimballed motor · PID · Simulink</span></div>
-      <div class="gallery">
+      <div class="mosaic">
         <figure class="media" data-label="images/tvc-mount.jpg"><img src="images/tvc-mount.jpg" alt=""></figure>
         <figure class="media" data-label="images/tvc-simulink.png"><img src="images/tvc-simulink.png" alt=""></figure>
       </div>
@@ -569,23 +596,23 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
          Each of the first three has a video slot (images/motor-1.mp4 ...) and a thrust curve slot (images/thrust-1.jpg ...). -->
     <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">MOTOR 01</span><h3>First static fire</h3><p>KNO₃ and sugar propellant. The baseline: getting a motor to burn at all.</p><span class="change">KNO₃ / sugar</span>
-        <figure class="media thrust" data-label="images/thrust-1.jpg  ·  thrust curve"><img src="images/thrust-1.jpg" alt="Motor 1 thrust curve"></figure></div>
+        <figure class="media thrust ink" data-label="images/thrust-1.jpg  ·  thrust curve"><img src="images/thrust-1.jpg" alt="Motor 1 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-1.mp4  ·  static fire video"><img src="images/motor-1.jpg" alt=""></figure></div>
     <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Describe what you changed after motor 1 and what happened.</p><span class="change">Change: ___</span>
-        <figure class="media thrust" data-label="images/thrust-2.jpg  ·  thrust curve"><img src="images/thrust-2.jpg" alt="Motor 2 thrust curve"></figure></div>
+        <figure class="media thrust ink" data-label="images/thrust-2.jpg  ·  thrust curve"><img src="images/thrust-2.jpg" alt="Motor 2 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-2.mp4  ·  static fire video"><img src="images/motor-2.jpg" alt=""></figure></div>
     <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Describe what you changed after motor 2 and what happened.</p><span class="change">Change: ___</span>
-        <figure class="media thrust" data-label="images/thrust-3.jpg  ·  thrust curve"><img src="images/thrust-3.jpg" alt="Motor 3 thrust curve"></figure></div>
+        <figure class="media thrust ink" data-label="images/thrust-3.jpg  ·  thrust curve"><img src="images/thrust-3.jpg" alt="Motor 3 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-3.mp4  ·  static fire video"><img src="images/motor-3.jpg" alt=""></figure></div>
     <div class="step"><span class="dot"></span>
       <div><span class="n">REDESIGN</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
-      <figure class="media" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div>
+      <div class="mosaic" data-h="430"><figure class="media ink" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div></div>
     <div class="step final"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. Over 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, swing performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
-      <div class="gallery">
+      <div class="mosaic">
         <figure class="media" data-label="images/motor-final.jpg"><img src="images/motor-final.jpg" alt=""></figure>
         <figure class="media" data-label="images/motor-final-2.jpg"><img src="images/motor-final-2.jpg" alt=""></figure>
         <figure class="media" data-label="images/motor-final-3.jpg"><img src="images/motor-final-3.jpg" alt=""></figure>
@@ -604,14 +631,15 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
       <div><span class="n">AGE 13 <span class="status s-fail">Never flew</span></span><h3>Attempt one</h3>
         <p>Built from scratch with no real way of sizing anything. It never got off the ground.</p>
         <!-- EDIT: what went wrong? too heavy, underpowered, wing too small? --></div>
-      <figure class="media" data-label="images/rc-01.jpg"><img src="images/rc-01.jpg" alt=""></figure>
+      <div class="mosaic" data-h="440"><figure class="media" data-label="images/rc-01.jpg"><img src="images/rc-01.jpg" alt=""></figure></div>
     </div>
     <div class="step"><span class="dot"></span>
       <div><span class="n">AGE 16 <span class="status s-ok">Flew</span></span><h3>Rebuilt with the physics</h3>
         <p>Using HL Physics and Maths, I used the lift equation to size the wing for my target weight, and chose the motor for the thrust-to-weight ratio it needed.</p>
         <span class="change">Wing sized with lift equation · motor sized for T:W</span>
         <p class="lesson" style="margin-top:14px">The difference between the two attempts was not effort. It was understanding.</p></div>
-      <div class="gallery">
+      <div class="mosaic">
+        <figure class="media" data-label="images/cover-rc.jpg"><img src="images/cover-rc.jpg" alt=""></figure>
         <figure class="media" data-label="images/rc-02.jpg"><img src="images/rc-02.jpg" alt=""></figure>
         <figure class="media" data-label="images/rc-02-flight.jpg"><img src="images/rc-02-flight.jpg" alt=""></figure>
       </div>
@@ -626,7 +654,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   <div class="ptext">
     <div><p>At STAR Lab, our team built a 1U CubeSat prototype. I designed the PCB in Eagle and etched it in-house, wrote the code to send orientation data down to a ground station, and built the antenna deployment mechanism.</p>
       <p class="lesson">Every component choice was a trade-off between weight and space.</p></div>
-    <div class="gallery">
+    <div class="mosaic">
       <figure class="media" data-label="images/cubesat.jpg"><img src="images/cubesat.jpg" alt=""></figure>
       <figure class="media" data-label="images/cubesat-pcb.jpg"><img src="images/cubesat-pcb.jpg" alt=""></figure>
       <figure class="media" data-label="images/cubesat-antenna.jpg"><img src="images/cubesat-antenna.jpg" alt=""></figure>
@@ -642,7 +670,7 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   <div class="ptext">
     <div><p>I interned at Vanguard Defense, a computer-vision startup. Our team of eight built a tool to detect and label vehicles in satellite images, used to train their model.</p>
       <p>I researched suitable datasets, built the annotation tool and presented the final product to the founder. It was my first time pitching software as part of a team.</p></div>
-    <figure class="media" data-label="images/vanguard-tool.png"><img src="images/vanguard-tool.png" alt=""></figure>
+    <div class="mosaic"><figure class="media" data-t="6" data-label="images/vanguard-tool.png"><img src="images/vanguard-tool.png" alt=""></figure></div>
   </div>
 </template>
 
@@ -701,7 +729,8 @@ footer{font-family:var(--mono);font-size:11px;color:var(--dim);padding:26px 32px
   <div class="ptext">
     <div><p>Add a two or three line summary of what the talk was about.</p>
       <a class="btn pri" href="#">Watch the talk →</a></div>
-    <figure class="media" data-label="images/tedx.jpg"><img src="images/tedx.jpg" alt=""></figure>
+    <!-- a photo from the talk: replace cover-tedx.jpg with tedx.jpg here if you add a different one -->
+    <div class="mosaic"><figure class="media" data-label="images/cover-tedx.jpg"><img src="images/cover-tedx.jpg" alt=""></figure></div>
   </div>
 </template>
 
@@ -725,8 +754,14 @@ function fitMedia(fig,el,w,h){
   if(fig.closest('.avatar')||fig.closest('.pcard'))return;
   const isVid=el.tagName==='VIDEO',portrait=h>w*1.05;
   if(fig.classList.contains('cover')){if(!isVid)coverReady(fig,el,w,h);return}
-  if(fig.classList.contains('v916')){             // tall video slot: keep 9:16; letterbox anything that isn't tall
-    if(Math.abs(w/h-9/16)>.08)fig.classList.add('fit');return}
+  if(fig.closest('.mosaic')){                    // project photos: packed into rows by layoutMosaic
+    fig.dataset.r=(w/h).toFixed(4);
+    if(!isVid&&(w/h<.42||w/h>2.6)){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
+    mosaicCheck(fig.closest('.mosaic'));return}
+  if(fig.classList.contains('v916')){             // tall static-fire slot: takes the shot's own shape, trimming only very thin ones
+    const r=Math.min(.75,Math.max(.42,w/h));fig.style.setProperty('--r',r.toFixed(4));
+    if(!isVid&&Math.abs(r-w/h)>.01){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
+    return}
   if(fig.closest('.dgrid')){                    // CAD & prints grid: photo fills the whole box, framed on its most detailed part
     if(!isVid){const f=focalPoint(el);el.style.objectPosition=`${(f.x*100).toFixed(1)}% ${(f.y*100).toFixed(1)}%`}
     return}
@@ -750,13 +785,13 @@ function tryVideo(fig,img){
     if(alt){img.addEventListener('error',()=>tryVideo(fig,img),{once:true});img.addEventListener('load',()=>fitMedia(fig,img,img.naturalWidth,img.naturalHeight),{once:true});img.src=alt;return}}
   const orig=img.dataset.orig,src=orig.replace(/\.(jpe?g|png|webp)$/i,'.mp4');
   img.remove();
-  if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');if(fig.classList.contains('cover'))layoutTile(fig.closest('.tile'));return}   // homepage tiles are photo-only
+  if(src===orig||fig.classList.contains('cover')){fig.classList.add('empty');if(fig.classList.contains('cover'))layoutTile(fig.closest('.tile'));mosaicCheck(fig.closest('.mosaic'));return}   // homepage tiles are photo-only
   const v=document.createElement('video');
   // videos never autoplay: load just enough to show the first frame, play on click
   v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
   v.addEventListener('loadedmetadata',()=>{fitMedia(fig,v,v.videoWidth,v.videoHeight);markVideo(fig,v)},{once:true});
-  v.addEventListener('error',()=>{v.remove();fig.classList.add('empty')},{once:true});
-  v.src=src+'#t=0.1';fig.appendChild(v);
+  v.addEventListener('error',()=>{v.remove();fig.classList.add('empty');mosaicCheck(fig.closest('.mosaic'))},{once:true});
+  v.src=src+'#t='+(fig.dataset.t||0.1);   // data-t on a slot picks which moment shows as the stillfig.appendChild(v);
 }
 /* ---------- project tiles: fit each cover photo to its real shape ---------- */
 // Finds the busiest part of a photo (edges and contrast) so any trimming keeps the subject in frame.
@@ -815,7 +850,48 @@ if(window.ResizeObserver){const seen=new WeakMap();
     if(seen.get(t)!==k){seen.set(t,k);layoutTile(t)}}));
   document.querySelectorAll('.grid .tile').forEach(t=>ro.observe(t));}
 if(document.fonts)document.fonts.ready.then(()=>document.querySelectorAll('.grid .tile').forEach(layoutTile));
-function wireImages(root){root.querySelectorAll('.media img:not(.bgblur)').forEach(img=>{
+/* ---------- project photo mosaics ---------- */
+// Splits the photos into rows so each row fills the width exactly at a comfortable height.
+// Every photo keeps its real shape; only extreme slivers or panoramas are trimmed (around their detail).
+// Empty slots are hidden on the live site; add ?slots to the address to see their file names.
+if(/[?&]slots\b/.test(location.search))document.body.classList.add('slots');
+const mClamp=r=>Math.min(2.6,Math.max(.42,r||4/3));
+function layoutMosaic(m){
+  if(!m)return;const W=Math.floor(m.getBoundingClientRect().width)-1;if(W<40)return;   // floor: a fractional width must never push a row's last photo down
+  const show=document.body.classList.contains('slots'),figs=[...m.children].filter(f=>f.tagName==='FIGURE');
+  const items=figs.filter(f=>show||!f.classList.contains('empty'));
+  m.classList.toggle('none',!items.length);if(!items.length)return;
+  const g=innerWidth<900?8:10,T=+m.dataset.h||(W<520?220:Math.min(320,W*.44)),maxH=+m.dataset.h||T*1.4;
+  const R=items.map(f=>mClamp(+f.dataset.r)),n=R.length,best=[0],cut=[0];
+  for(let i=1;i<=n;i++){best[i]=Infinity;
+    for(let j=Math.max(0,i-(W<520?2:4));j<i;j++){let sum=0;for(let k=j;k<i;k++)sum+=R[k];
+      const h=(W-g*(i-j-1))/sum,hh=Math.min(h,maxH);
+      let c=best[j]+((hh-T)/T)**2+(h>maxH?(h-maxH)/T*.8:0);   // rows that can't fill the width are allowed but discouraged
+      for(let k=j;k<i;k++)if(R[k]*hh<(W<520?110:150))c+=1;     // and no photo squeezed into a sliver
+      if(c<best[i]){best[i]=c;cut[i]=j}}}
+  const rows=[];for(let i=n;i>0;i=cut[i])rows.unshift([cut[i],i]);
+  rows.forEach(([a,b])=>{let sum=0;for(let k=a;k<b;k++)sum+=R[k];
+    const full=(W-g*(b-a-1))/sum,h=Math.floor(Math.min(full,maxH));let used=0;
+    for(let k=a;k<b;k++){const f=items[k];let w=Math.floor(R[k]*h);
+      if(k===b-1&&full<=maxH)w=W-g*(b-a-1)-used;           // last photo absorbs rounding so the row ends flush
+      used+=w;f.style.width=w+'px';f.style.height=h+'px';f.style.marginRight='0px'}
+    items[b-1].style.marginRight=Math.max(0,W-used-g*(b-a-1))+'px'});   // short rows sit left, next row starts fresh
+}
+function mosaicCheck(m){
+  if(!m)return;layoutMosaic(m);
+  const pending=[...m.children].some(f=>f.tagName==='FIGURE'&&!f.dataset.r&&!f.classList.contains('empty'));
+  if(!pending&&!m.classList.contains('ready'))revealMosaic(m);
+}
+function revealMosaic(m){
+  [...m.children].filter(f=>f.tagName==='FIGURE'&&f.style.display!=='none').forEach((f,i)=>{f.style.transitionDelay=(i*90)+'ms';
+    setTimeout(()=>f.style.transitionDelay='',900+i*90)});
+  m.classList.add('ready');
+}
+const mRO=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>{const m=e.target,w=Math.round(e.contentRect.width);
+  if(m._w!==w){m._w=w;layoutMosaic(m)}})):null;
+function wireMosaics(root){root.querySelectorAll('.mosaic').forEach(m=>{layoutMosaic(m);if(mRO)mRO.observe(m);
+  setTimeout(()=>{if(!m.classList.contains('ready')){layoutMosaic(m);revealMosaic(m)}},2500)})}   // never wait forever on a slow file
+function wireImages(root){wireMosaics(root);root.querySelectorAll('.media img:not(.bgblur)').forEach(img=>{
   const fig=img.parentNode;
   const ok=()=>fitMedia(fig,img,img.naturalWidth,img.naturalHeight);
   if(img.complete){img.naturalWidth?ok():tryVideo(fig,img)}

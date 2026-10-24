@@ -7,10 +7,20 @@ boxes on the site (e.g. `images/motor-1.jpg`). They appear automatically. No cod
 Visitors can click any photo inside a project to open it full screen, then flick through
 the other photos from that same section with the arrows (or swipe on a phone).
 
-The first rocket, the flight computer rocket and the final motor each have 4 photo slots.
+Inside each project, photos are packed into rows that fill the width exactly: every photo keeps
+its own shape (nothing stretched, no black bars) and photos in the same row share one height.
+Any number and any mix of shapes works. Only very thin or very wide shots get trimmed a little,
+around their most detailed part. Click any photo to see it whole.
+
 To add more anywhere, find that section in `index.html`, copy one `<figure ...>` line,
-and change the file name in both places on that line. Empty slots are skipped by the viewer,
-but they still show as striped boxes on the page, so delete any you don't fill.
+and change the file name in both places on that line. Empty slots are hidden on the live site.
+To see every slot with its file name, open the site with `?slots` on the end
+(e.g. `dhyeysojitra.com/?slots#p/rockets`).
+
+Graphs and line drawings on white paper (thrust curves, the schematic, the nozzle drawing) are shown
+in dark mode so they sit in the page. To do that to another image, add `ink` to its class
+(`class="media ink"`). For a normal photo with a bright white background use `paper` instead,
+which just tones it down.
 
 ## Adding videos
 Any photo slot can show a video instead. Name the video the same as the slot but ending in `.mp4`
@@ -18,6 +28,7 @@ Any photo slot can show a video instead. Name the video the same as the slot but
 it shows the `.mp4` as a still frame with a play button, and visitors click it to watch full screen with sound.
 Videos only play inside projects. The homepage tiles (`cover-...`) are photo-only.
 Keep clips short (5 to 20 s) and under about 10 MB. iPhone `.MOV` files need converting to `.mp4` first.
+To choose which moment shows as the still before it plays, add `data-t="6"` (seconds) to that slot's `<figure>`.
 
 ## Motors page
 The first three static fires each have a tall video slot (`motor-1.mp4`, `motor-2.mp4`, `motor-3.mp4`)
