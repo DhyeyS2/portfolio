@@ -608,7 +608,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
       <figure class="media v916" data-label="images/motor-3.mp4  ·  static fire video"><img src="images/motor-3.jpg" alt=""></figure></div>
     <div class="step"><span class="dot"></span>
       <div><span class="n">REDESIGN</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
-      <div class="mosaic" data-h="430"><figure class="media ink" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div></div>
+      <div class="mosaic" data-h="430"><figure class="media" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div></div>
     <div class="step final"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
       <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. Over 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, swing performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
@@ -791,7 +791,7 @@ function tryVideo(fig,img){
   v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
   v.addEventListener('loadedmetadata',()=>{fitMedia(fig,v,v.videoWidth,v.videoHeight);markVideo(fig,v)},{once:true});
   v.addEventListener('error',()=>{v.remove();fig.classList.add('empty');mosaicCheck(fig.closest('.mosaic'))},{once:true});
-  v.src=src+'#t='+(fig.dataset.t||0.1);   // data-t on a slot picks which moment shows as the stillfig.appendChild(v);
+  v.src=src+'#t='+(fig.dataset.t||0.1);fig.appendChild(v);   // data-t on a slot picks which moment shows as the still
 }
 /* ---------- project tiles: fit each cover photo to its real shape ---------- */
 // Finds the busiest part of a photo (edges and contrast) so any trimming keeps the subject in frame.
