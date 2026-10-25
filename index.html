@@ -573,6 +573,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
         <figure class="media" data-label="images/flight-computer.JPG"><img src="images/flight-computer.JPG" alt=""></figure>
         <figure class="media" data-label="images/rocket-02-3.jpg"><img src="images/rocket-02-3.jpg" alt=""></figure>
         <figure class="media" data-label="images/rocket-02-4.jpg"><img src="images/rocket-02-4.jpg" alt=""></figure>
+        <figure class="media" data-label="images/rocket-02-5.jpg"><img src="images/rocket-02-5.jpg" alt=""></figure>
       </div>
     </div>
     <div class="step"><span class="dot"></span>
@@ -709,7 +710,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
 
   <div class="dsec"><span class="code">02</span><h3>CAD Designs &amp; 3D Prints</h3></div>
   <!-- Photos: images/design-1.jpg to design-9.jpg (CAD renders, practice products, 3D prints). Delete any slot you don't use. -->
-  <div class="gallery dgrid">
+  <div class="mosaic dmosaic">
     <figure class="media" data-label="images/design-1.jpg"><img src="images/design-1.jpg" alt=""></figure>
     <figure class="media" data-label="images/design-2.jpg"><img src="images/design-2.jpg" alt=""></figure>
     <figure class="media" data-label="images/design-3.jpg"><img src="images/design-3.jpg" alt=""></figure>
@@ -1199,7 +1200,7 @@ function lbShow(i,anim){
   else{lbCur.style.opacity=0;setTimeout(()=>{setCur(src);lbCur.style.transition='none';place(fitRect(src));void lbCur.offsetWidth;lbCur.style.transition=''},160)}
 }
 function lbOpen(el){
-  const group=el.closest('.step')||el.closest('.ptext')||el.closest('.pdgrid')||el.closest('.gallery')||el.closest('.about')||el.parentNode;
+  const group=el.closest('.step')||el.closest('.ptext')||el.closest('.pdgrid')||el.closest('.gallery')||el.closest('.about')||el.closest('.mosaic')||el.parentNode;
   lbList=[...group.querySelectorAll('.media img:not(.bgblur), .media video:not(.bgblur)')].filter(x=>dims(x)[0]);
   lb.classList.toggle('single',lbList.length<2);
   lb.classList.add('on');lb.setAttribute('aria-hidden','false');lbShow(lbList.indexOf(el),true);
