@@ -551,7 +551,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
   <div class="tl">
     <div class="fill"></div>
     <div class="step"><span class="dot"></span>
-      <div><span class="n">RKT-01 <span class="status s-fail">Motor failure</span></span><h3>First rocket</h3>
+      <div><span class="n">RKT-01 <span class="status s-fail">Motor failure</span></span><h3>First rocket 'Project Air'</h3>
         <p>Built in India around a KNO₃ and sugar motor. On launch day the motor failed and it never left the ground.</p>
         <!-- EDIT: date, location, what exactly failed -->
         <p class="lesson" style="margin-top:12px">That failure is why I went back to first principles instead of guessing.</p></div>
@@ -564,8 +564,10 @@ body:not(.slots) .mosaic>.media.empty{display:none}
       </div>
     </div>
     <div class="step"><span class="dot"></span>
-      <div><span class="n">RKT-02 <span class="status s-ok">Flown · 520 m</span></span><h3>Flight computer rocket</h3>
-        <p>An 800 g rocket carrying a flight computer I designed from scratch: a 2-layer KiCad PCB with an IMU, barometric altimeter and live telemetry. It reached 520 m and logged the whole flight, giving me real data to check my trajectory model against.</p>
+      <div><span class="n">RKT-02 <span class="status s-ok">Flown · 520 m</span></span><h3>Kestrel</h3>
+        <p>An 800 g rocket carrying a flight computer I designed from scratch: a 2-layer KiCad PCB with an IMU, barometric altimeter and live telemetry. It reached an apogee of 520 metres and recovered successfully by parachute. I compared a
+hand-derived mathematical model of its trajectory with recorded flight data, with predictions within
+approximately 15% of observed results.</p>
         <span class="change">800 g · 520 m · custom avionics</span></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
       <div class="mosaic">
@@ -578,7 +580,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
     </div>
     <div class="step"><span class="dot"></span>
       <div><span class="n">RKT-03 <span class="status s-wip">In development</span></span><h3>TVC rocket</h3>
-        <p>No fins. It stays upright by steering its own thrust through a gimballed motor, the same idea that lets Falcon 9 land. I used rotational dynamics to model how gimbal angle affects attitude, then built a Simulink model of the rocket and controller to tune the PID loop before flight.</p>
+        <p>No fins. It stays upright by steering its own thrust through a gimballed motor, the same idea that lets Falcon 9 land. I am using rotational dynamics to model how gimbal angle affects attitude, then applying it to a Simulink model of the rocket and controller to tune the PID loop before flight.</p>
         <span class="change">Gimballed motor · PID · Simulink</span></div>
       <div class="mosaic">
         <figure class="media" data-label="images/tvc-mount.jpg"><img src="images/tvc-mount.jpg" alt=""></figure>
@@ -600,18 +602,18 @@ body:not(.slots) .mosaic>.media.empty{display:none}
         <figure class="media thrust ink" data-label="images/thrust-1.jpg  ·  thrust curve"><img src="images/thrust-1.jpg" alt="Motor 1 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-1.mp4  ·  static fire video"><img src="images/motor-1.jpg" alt=""></figure></div>
     <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Describe what you changed after motor 1 and what happened.</p><span class="change">Change: ___</span>
+      <div><span class="n">MOTOR 02</span><h3>Second firing</h3><p>Due to high motor pressure and weak bulkhead enclosure, the motor's aft burst open, leading to CATO</p><span class="change">Change: Increased length of the motor, while reducing nozzle diameter</span>
         <figure class="media thrust ink" data-label="images/thrust-2.jpg  ·  thrust curve"><img src="images/thrust-2.jpg" alt="Motor 2 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-2.mp4  ·  static fire video"><img src="images/motor-2.jpg" alt=""></figure></div>
     <div class="step vstep"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Describe what you changed after motor 2 and what happened.</p><span class="change">Change: ___</span>
+      <div><span class="n">MOTOR 03</span><h3>Third firing</h3><p>Strengthened the bulkhead closure after 2nd motor's CATO</p>
         <figure class="media thrust ink" data-label="images/thrust-3.jpg  ·  thrust curve"><img src="images/thrust-3.jpg" alt="Motor 3 thrust curve"></figure></div>
       <figure class="media v916" data-label="images/motor-3.mp4  ·  static fire video"><img src="images/motor-3.jpg" alt=""></figure></div>
     <div class="step"><span class="dot"></span>
-      <div><span class="n">REDESIGN</span><h3>Back to first principles</h3><p>Following Richard Nakka's methods, I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
+      <div><span class="n">REDESIGN</span><h3>Back to first principles</h3><p>I redesigned the nozzle properly in Onshape instead of iterating by guesswork.</p><span class="change">Nozzle redesigned in Onshape</span></div>
       <div class="mosaic" data-h="430"><figure class="media" data-label="images/motor-5.jpg"><img src="images/motor-5.jpg" alt=""></figure></div></div>
     <div class="step final"><span class="noz"><i class="bell"></i><i class="glow"></i><i class="fl"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span>
-      <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. Over 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, swing performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
+      <div><span class="n">FINAL MOTOR <span class="status s-ok">200 N+</span></span><h3>KNSB finocyl</h3><p>Following Richard Nakka's methods, reformulated to KNSB with a finocyl grain and a CNC-machined nozzle. When a sensor malfunction prevented direct thrust measurement, I combined simulations with casing heat analysis to estimate approximately 200 N of thrust. The biggest lesson: small decisions, from material choice to sealing, effect performance massively.</p><span class="change">KNSB · finocyl grain · CNC nozzle</span></div>
       <!-- add more photos: copy one <figure> line and change the file name -->
       <div class="mosaic">
         <figure class="media" data-label="images/motor-final.jpg"><img src="images/motor-final.jpg" alt=""></figure>
@@ -620,7 +622,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
         <figure class="media" data-label="images/motor-final-4.jpg"><img src="images/motor-final-4.jpg" alt=""></figure>
       </div></div>
   </div>
-  <p style="color:var(--muted);margin-top:44px;max-width:640px">Now contributing to a research project with a US university student, comparing five propellant formulations through static-fire testing.</p>
+  <p style="color:var(--muted);margin-top:44px;max-width:640px"></p>
 </template>
 
 <template id="t-rc" data-code="RC · AIRCRAFT" data-status="2 builds · 1 flown">
@@ -653,8 +655,8 @@ body:not(.slots) .mosaic>.media.empty{display:none}
     <p>A team build under strict mass and size limits, where every component was a trade-off.</p></div>
   <div class="kv"><div><dt>Form</dt><dd>1U (10 cm cube)</dd></div><div><dt>PCB</dt><dd>Eagle, etched in-house</dd></div><div><dt>My role</dt><dd>PCB · telemetry · antenna</dd></div></div>
   <div class="ptext">
-    <div><p>At STAR Lab, our team built a 1U CubeSat prototype. I designed the PCB in Eagle and etched it in-house, wrote the code to send orientation data down to a ground station, and built the antenna deployment mechanism.</p>
-      <p class="lesson">Every component choice was a trade-off between weight and space.</p></div>
+    <div><p>At STAR Lab, our team built a 1U CubeSat prototype. We designed the PCB in Eagle and etched it in-house, wrote the code to send orientation data down to a ground station, and built the antenna deployment mechanism.</p>
+      <p class="lesson">Given the strict design constraints, every component choice was a trade-off between weight and space.</p></div>
     <div class="mosaic">
       <figure class="media" data-label="images/cubesat.jpg"><img src="images/cubesat.jpg" alt=""></figure>
       <figure class="media" data-label="images/cubesat-pcb.jpg"><img src="images/cubesat-pcb.jpg" alt=""></figure>
@@ -670,7 +672,7 @@ body:not(.slots) .mosaic>.media.empty{display:none}
   <div class="kv"><div><dt>Team</dt><dd>8</dd></div><div><dt>Product</dt><dd>Annotation tool</dd></div><div><dt>My role</dt><dd>Datasets · tool · pitch</dd></div></div>
   <div class="ptext">
     <div><p>I interned at Vanguard Defense, a computer-vision startup. Our team of eight built a tool to detect and label vehicles in satellite images, used to train their model.</p>
-      <p>I researched suitable datasets, built the annotation tool and presented the final product to the founder. It was my first time pitching software as part of a team.</p></div>
+      <p>I researched suitable datasets, built the annotation tool and presented the final product to the founder. It was my first time pitching software as part of a team. (Video by a Noah Paden)</p></div>
     <div class="mosaic"><figure class="media" data-t="6" data-label="images/vanguard-tool.png"><img src="images/vanguard-tool.png" alt=""></figure></div>
   </div>
 </template>
